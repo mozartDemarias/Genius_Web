@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,6 +9,7 @@
   <!-- Folha de estilos pura (dark/neon, Flexbox, Grid e responsividade) -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
   <!-- ======================================================================
        FUNDO DESFOCADO COMPARTILHADO (TELAS 2, 3 E 4)
@@ -15,7 +17,7 @@
        (backdrop-filter: blur) fiel às imagens de referência dos menus.
        ====================================================================== -->
   <div id="menu-bg-board" class="menu-bg-board" aria-hidden="true" hidden>
-    <div class="bg-board-glow">
+    <div class="bg-board-glow idle-animation">
       <div class="bg-ring"></div>
       <div class="bg-quadrants">
         <div class="bg-quad bg-quad--blue"></div>
@@ -32,42 +34,22 @@
          TELA 1: TELA PRINCIPAL (Tela_principal_genius.png)
          Exibe o tabuleiro completo aceso, título central e prompt para entrar.
          ==================================================================== -->
-    <section
-      id="screen-start"
-      class="screen screen--start"
-      aria-label="Tela inicial do jogo Genius"
-    >
+    <section id="screen-start" class="screen screen--start" aria-label="Tela inicial do jogo Genius">
       <div class="start-stage">
-        <div class="genius-board genius-board--showcase" id="start-board">
+        <div class="genius-board genius-board--showcase idle-animation" id="start-board">
           <!-- Anel externo circular com gradiente neon das 4 cores -->
           <div class="board-outer-ring" aria-hidden="true"></div>
 
           <!-- Grade 2x2 com os 4 quadrantes neon da tela de abertura -->
           <div class="board-quadrants">
-            <button
-              type="button"
-              class="pad pad--blue pad--showcase"
-              data-start-pad="blue"
-              aria-label="Entrar no jogo tocando no quadrante azul"
-            ></button>
-            <button
-              type="button"
-              class="pad pad--red pad--showcase"
-              data-start-pad="red"
-              aria-label="Entrar no jogo tocando no quadrante vermelho"
-            ></button>
-            <button
-              type="button"
-              class="pad pad--green pad--showcase"
-              data-start-pad="green"
-              aria-label="Entrar no jogo tocando no quadrante verde"
-            ></button>
-            <button
-              type="button"
-              class="pad pad--yellow pad--showcase"
-              data-start-pad="yellow"
-              aria-label="Entrar no jogo tocando no quadrante amarelo"
-            ></button>
+            <button type="button" class="pad pad--blue pad--showcase" data-start-pad="blue"
+              aria-label="Entrar no jogo tocando no quadrante azul"></button>
+            <button type="button" class="pad pad--red pad--showcase" data-start-pad="red"
+              aria-label="Entrar no jogo tocando no quadrante vermelho"></button>
+            <button type="button" class="pad pad--green pad--showcase" data-start-pad="green"
+              aria-label="Entrar no jogo tocando no quadrante verde"></button>
+            <button type="button" class="pad pad--yellow pad--showcase" data-start-pad="yellow"
+              aria-label="Entrar no jogo tocando no quadrante amarelo"></button>
           </div>
 
           <!-- Círculo central com borda em gradiente angular colorido -->
@@ -80,12 +62,8 @@
           </div>
         </div>
 
-        <button
-          type="button"
-          id="btn-start-prompt"
-          class="start-prompt-btn"
-        >
-          aperte qualquer botão para entrar no jogo
+        <button type="button" id="btn-start-prompt" class="start-prompt-btn">
+          APERTE QUALQUER BOTÃO PARA ENTRAR NO JOGO
         </button>
       </div>
     </section>
@@ -94,12 +72,7 @@
          TELA 2: SELEÇÃO DE MODO (segunda_tela_modo_de_jogo.png)
          Modal central translúcido com as opções Online e Local.
          ==================================================================== -->
-    <section
-      id="screen-mode"
-      class="screen screen--modal"
-      aria-labelledby="mode-title"
-      hidden
-    >
+    <section id="screen-mode" class="screen screen--modal" aria-labelledby="mode-title" hidden>
       <div class="neon-modal neon-modal--mode">
         <h2 id="mode-title" class="modal-heading">Selecione o modo de jogo</h2>
 
@@ -107,7 +80,8 @@
           <!-- Botão Online (gradiente azul para vermelho + ícone Wi-Fi) -->
           <button type="button" id="btn-mode-online" class="mode-btn mode-btn--online">
             <span class="mode-btn__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
                 <path d="M5 12.55a11 11 0 0 1 14.08 0" />
                 <path d="M1.42 9a16 16 0 0 1 21.16 0" />
                 <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
@@ -121,7 +95,8 @@
           <!-- Botão Local (gradiente verde para amarelo + ícone Usuários) -->
           <button type="button" id="btn-mode-local" class="mode-btn mode-btn--local">
             <span class="mode-btn__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                stroke-linejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="3.5" />
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
@@ -139,21 +114,12 @@
          TELA 3: CONFIGURAÇÃO DO JOGO LOCAL (configuracao_jogo_local.png)
          Permite definir quantidade de jogadores (1 a 4), dificuldade e iniciar.
          ==================================================================== -->
-    <section
-      id="screen-local-config"
-      class="screen screen--modal"
-      aria-labelledby="local-config-title"
-      hidden
-    >
+    <section id="screen-local-config" class="screen screen--modal" aria-labelledby="local-config-title" hidden>
       <!-- Botão discreto de voltar no canto superior esquerdo -->
-      <button
-        type="button"
-        id="btn-local-back"
-        class="icon-btn floating-back-btn"
-        aria-label="Voltar para seleção de modo"
-        title="Voltar"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button type="button" id="btn-local-back" class="icon-btn floating-back-btn"
+        aria-label="Voltar para seleção de modo" title="Voltar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
           <path d="M19 12H5" />
           <path d="M11 6l-6 6 6 6" />
         </svg>
@@ -173,9 +139,12 @@
 
           <div class="pill-grid pill-grid--players" role="group" aria-label="Quantidade de jogadores local">
             <button type="button" class="pill-btn pill-btn--blue" data-local-players="1" aria-pressed="false">1</button>
-            <button type="button" class="pill-btn pill-btn--red is-selected" data-local-players="2" aria-pressed="true">2</button>
-            <button type="button" class="pill-btn pill-btn--yellow" data-local-players="3" aria-pressed="false">3</button>
-            <button type="button" class="pill-btn pill-btn--green" data-local-players="4" aria-pressed="false">4</button>
+            <button type="button" class="pill-btn pill-btn--red is-selected" data-local-players="2"
+              aria-pressed="true">2</button>
+            <button type="button" class="pill-btn pill-btn--yellow" data-local-players="3"
+              aria-pressed="false">3</button>
+            <button type="button" class="pill-btn pill-btn--green" data-local-players="4"
+              aria-pressed="false">4</button>
           </div>
         </div>
 
@@ -188,9 +157,12 @@
           </div>
 
           <div class="pill-grid pill-grid--difficulty" role="group" aria-label="Dificuldade local">
-            <button type="button" class="pill-btn pill-btn--blue" data-local-difficulty="easy" aria-pressed="false">Fácil</button>
-            <button type="button" class="pill-btn pill-btn--red is-selected" data-local-difficulty="medium" aria-pressed="true">Médio</button>
-            <button type="button" class="pill-btn pill-btn--yellow" data-local-difficulty="hard" aria-pressed="false">Difícil</button>
+            <button type="button" class="pill-btn pill-btn--blue" data-local-difficulty="easy"
+              aria-pressed="false">Fácil</button>
+            <button type="button" class="pill-btn pill-btn--red is-selected" data-local-difficulty="medium"
+              aria-pressed="true">Médio</button>
+            <button type="button" class="pill-btn pill-btn--yellow" data-local-difficulty="hard"
+              aria-pressed="false">Difícil</button>
           </div>
         </div>
 
@@ -207,21 +179,12 @@
          TELA 4: CONFIGURAÇÃO DO JOGO ONLINE (configuracao_jogo_online.jpg)
          Interface completa e interativa (sem backend, exibe aviso ao agir).
          ==================================================================== -->
-    <section
-      id="screen-online-config"
-      class="screen screen--modal"
-      aria-labelledby="online-config-title"
-      hidden
-    >
+    <section id="screen-online-config" class="screen screen--modal" aria-labelledby="online-config-title" hidden>
       <!-- Botão discreto de voltar no canto superior esquerdo -->
-      <button
-        type="button"
-        id="btn-online-back"
-        class="icon-btn floating-back-btn"
-        aria-label="Voltar para seleção de modo"
-        title="Voltar"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button type="button" id="btn-online-back" class="icon-btn floating-back-btn"
+        aria-label="Voltar para seleção de modo" title="Voltar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
           <path d="M19 12H5" />
           <path d="M11 6l-6 6 6 6" />
         </svg>
@@ -241,10 +204,14 @@
             <p class="section-subtitle">até 4 jogadores</p>
 
             <div class="pill-grid pill-grid--players" role="group" aria-label="Quantidade de jogadores online">
-              <button type="button" class="pill-btn pill-btn--blue" data-online-players="1" aria-pressed="false">1</button>
-              <button type="button" class="pill-btn pill-btn--red is-selected" data-online-players="2" aria-pressed="true">2</button>
-              <button type="button" class="pill-btn pill-btn--yellow" data-online-players="3" aria-pressed="false">3</button>
-              <button type="button" class="pill-btn pill-btn--green" data-online-players="4" aria-pressed="false">4</button>
+              <button type="button" class="pill-btn pill-btn--blue" data-online-players="1"
+                aria-pressed="false">1</button>
+              <button type="button" class="pill-btn pill-btn--red is-selected" data-online-players="2"
+                aria-pressed="true">2</button>
+              <button type="button" class="pill-btn pill-btn--yellow" data-online-players="3"
+                aria-pressed="false">3</button>
+              <button type="button" class="pill-btn pill-btn--green" data-online-players="4"
+                aria-pressed="false">4</button>
             </div>
           </div>
 
@@ -257,9 +224,12 @@
             </div>
 
             <div class="pill-grid pill-grid--difficulty" role="group" aria-label="Dificuldade online">
-              <button type="button" class="pill-btn pill-btn--blue" data-online-difficulty="easy" aria-pressed="false">Fácil</button>
-              <button type="button" class="pill-btn pill-btn--red is-selected" data-online-difficulty="medium" aria-pressed="true">Médio</button>
-              <button type="button" class="pill-btn pill-btn--yellow" data-online-difficulty="hard" aria-pressed="false">Difícil</button>
+              <button type="button" class="pill-btn pill-btn--blue" data-online-difficulty="easy"
+                aria-pressed="false">Fácil</button>
+              <button type="button" class="pill-btn pill-btn--red is-selected" data-online-difficulty="medium"
+                aria-pressed="true">Médio</button>
+              <button type="button" class="pill-btn pill-btn--yellow" data-online-difficulty="hard"
+                aria-pressed="false">Difícil</button>
             </div>
           </div>
 
@@ -273,14 +243,8 @@
 
             <div class="invite-row">
               <label for="online-invite-code" class="sr-only">Código de convite</label>
-              <input
-                id="online-invite-code"
-                type="text"
-                class="invite-input"
-                placeholder="Ex.: GENIUS1234"
-                maxlength="16"
-                autocomplete="off"
-              />
+              <input id="online-invite-code" type="text" class="invite-input" placeholder="Ex.: GENIUS1234"
+                maxlength="16" autocomplete="off" />
               <button type="submit" id="btn-online-join" class="online-join-btn">
                 Entrar
               </button>
@@ -300,22 +264,13 @@
          TELA 5: TELA DE JOGO (tela_in_game.png)
          Topo com Voltar/Configurações, cards dos jogadores e tabuleiro jogável.
          ==================================================================== -->
-    <section
-      id="screen-game"
-      class="screen screen--game"
-      aria-label="Tabuleiro do jogo Genius"
-      hidden
-    >
+    <section id="screen-game" class="screen screen--game" aria-label="Tabuleiro do jogo Genius" hidden>
       <!-- Barra superior de navegação e configurações -->
       <header class="game-topbar">
-        <button
-          type="button"
-          id="btn-game-back"
-          class="icon-btn"
-          aria-label="Voltar para configuração da partida"
-          title="Voltar"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <button type="button" id="btn-game-back" class="icon-btn" aria-label="Voltar para configuração da partida"
+          title="Voltar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
             <path d="M19 12H5" />
             <path d="M11 6l-6 6 6 6" />
           </svg>
@@ -326,16 +281,13 @@
           <strong id="hud-round">1</strong>
         </div>
 
-        <button
-          type="button"
-          id="btn-game-settings"
-          class="icon-btn"
-          aria-label="Abrir configurações da partida"
-          title="Configurações"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <button type="button" id="btn-game-settings" class="icon-btn" aria-label="Abrir configurações da partida"
+          title="Configurações">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
           </svg>
         </button>
       </header>
@@ -377,34 +329,14 @@
 
             <!-- Quadrantes interativos com suporte a pointerdown e atalhos Q, W, A, S -->
             <div class="board-quadrants">
-              <button
-                type="button"
-                class="pad pad--blue"
-                data-color="blue"
-                aria-label="Quadrante Azul (tecla Q)"
-                aria-keyshortcuts="Q"
-              ></button>
-              <button
-                type="button"
-                class="pad pad--red"
-                data-color="red"
-                aria-label="Quadrante Vermelho (tecla W)"
-                aria-keyshortcuts="W"
-              ></button>
-              <button
-                type="button"
-                class="pad pad--green"
-                data-color="green"
-                aria-label="Quadrante Verde (tecla A)"
-                aria-keyshortcuts="A"
-              ></button>
-              <button
-                type="button"
-                class="pad pad--yellow"
-                data-color="yellow"
-                aria-label="Quadrante Amarelo (tecla S)"
-                aria-keyshortcuts="S"
-              ></button>
+              <button type="button" class="pad pad--blue" data-color="blue" aria-label="Quadrante Azul (tecla Q)"
+                aria-keyshortcuts="Q"></button>
+              <button type="button" class="pad pad--red" data-color="red" aria-label="Quadrante Vermelho (tecla W)"
+                aria-keyshortcuts="W"></button>
+              <button type="button" class="pad pad--green" data-color="green" aria-label="Quadrante Verde (tecla A)"
+                aria-keyshortcuts="A"></button>
+              <button type="button" class="pad pad--yellow" data-color="yellow" aria-label="Quadrante Amarelo (tecla S)"
+                aria-keyshortcuts="S"></button>
             </div>
 
             <!-- Círculo central informativo: logo, 4 quadradinhos, divisor e turno atual -->
@@ -467,14 +399,8 @@
        MODAL DE CONFIGURAÇÕES (ENGRENAGEM NA TELA DE JOGO)
        Contém controle de Som On/Off, Recorde salvo e Reiniciar Partida.
        ====================================================================== -->
-  <div
-    id="modal-settings"
-    class="modal-overlay"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="settings-modal-title"
-    hidden
-  >
+  <div id="modal-settings" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title"
+    hidden>
     <div class="neon-modal neon-modal--dialog">
       <h2 id="settings-modal-title" class="modal-heading">Configurações</h2>
 
@@ -514,14 +440,7 @@
   <!-- ======================================================================
        MODAL DE FIM DE PARTIDA (GAME OVER NO MODO 1P / VITÓRIA NO MULTIPLAYER)
        ====================================================================== -->
-  <div
-    id="modal-endgame"
-    class="modal-overlay"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="endgame-title"
-    hidden
-  >
+  <div id="modal-endgame" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="endgame-title" hidden>
     <div class="neon-modal neon-modal--dialog">
       <span id="endgame-record-badge" class="record-badge" hidden>NOVO RECORDE!</span>
       <h2 id="endgame-title" class="modal-heading">Game Over</h2>
@@ -563,4 +482,5 @@
   <!-- Ponto de entrada ES6+ da aplicação -->
   <script type="module" src="js/main.js"></script>
 </body>
+
 </html>

@@ -43,6 +43,9 @@
   --pad-r-outer: clamp(64px, 10.5vmin, 112px);
   --pad-r-inner: clamp(18px, 2.6vmin, 28px);
   --board-gap: clamp(18px, 2.2vmin, 26px);
+
+  /* Duração total compartilhada pelo giro dos anéis e pulso sequencial dos 4 botões */
+  --cycle-duration: 3.2s;
 }
 
 /* Reset global */
@@ -124,6 +127,14 @@ body {
   height: clamp(125dvh, 92vw, 165dvh);
   aspect-ratio: 1 / 1;
   border-radius: 50%;
+}
+
+/* Pseudo-elemento da borda do anel de fundo permite girar 360deg sem afetar translate(-50%, -50%) */
+.bg-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
   padding: 6px;
   background: conic-gradient(
     from 0deg,
@@ -155,21 +166,25 @@ body {
 }
 
 .bg-quad--blue {
+  --pad-pulse-glow: rgba(20, 184, 255, 0.88);
   border-radius: var(--pad-r-outer) var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-inner);
   background: radial-gradient(circle at 46% 48%, #14b8ff 0%, #0044cc 90%);
 }
 
 .bg-quad--red {
+  --pad-pulse-glow: rgba(255, 59, 59, 0.88);
   border-radius: var(--pad-r-inner) var(--pad-r-outer) var(--pad-r-inner) var(--pad-r-inner);
   background: radial-gradient(circle at 54% 48%, #ff3b3b 0%, #b30000 90%);
 }
 
 .bg-quad--green {
+  --pad-pulse-glow: rgba(34, 255, 34, 0.88);
   border-radius: var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-outer);
   background: radial-gradient(circle at 46% 52%, #22ff22 0%, #008800 90%);
 }
 
 .bg-quad--yellow {
+  --pad-pulse-glow: rgba(255, 230, 0, 0.88);
   border-radius: var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-outer) var(--pad-r-inner);
   background: radial-gradient(circle at 54% 52%, #ffe600 0%, #b38600 90%);
 }
@@ -351,6 +366,7 @@ body {
 
 /* Cantos arredondados assimétricos + gradientes radiais 3D neon */
 .pad--blue {
+  --pad-pulse-glow: rgba(20, 184, 255, 0.88);
   border-radius: var(--pad-r-outer) var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-inner);
   background: radial-gradient(circle at 46% 48%, #14b8ff 0%, #0077ee 58%, #0044cc 100%);
   border-color: var(--neon-blue-bright);
@@ -361,6 +377,7 @@ body {
 }
 
 .pad--red {
+  --pad-pulse-glow: rgba(255, 59, 59, 0.88);
   border-radius: var(--pad-r-inner) var(--pad-r-outer) var(--pad-r-inner) var(--pad-r-inner);
   background: radial-gradient(circle at 54% 48%, #ff3b3b 0%, #dc0814 58%, #b30000 100%);
   border-color: var(--neon-red-bright);
@@ -371,6 +388,7 @@ body {
 }
 
 .pad--green {
+  --pad-pulse-glow: rgba(34, 255, 34, 0.88);
   border-radius: var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-outer);
   background: radial-gradient(circle at 46% 52%, #22ff22 0%, #00c418 58%, #008800 100%);
   border-color: var(--neon-green-bright);
@@ -381,6 +399,7 @@ body {
 }
 
 .pad--yellow {
+  --pad-pulse-glow: rgba(255, 230, 0, 0.88);
   border-radius: var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-outer) var(--pad-r-inner);
   background: radial-gradient(circle at 54% 52%, #ffe600 0%, #e0b400 58%, #b38600 100%);
   border-color: var(--neon-yellow-bright);
@@ -393,8 +412,9 @@ body {
 /* Tela inicial: realce discreto ao passar o mouse/focar */
 .pad--showcase:hover,
 .pad--showcase:focus-visible {
-  transform: scale(1.012);
-  filter: brightness(1.16);
+  opacity: 1;
+  transform: scale(1.016);
+  filter: brightness(1.24);
 }
 
 /* Tela de jogo: quadrantes em repouso levemente contidos para maximizar contraste no .is-active */
@@ -1732,5 +1752,113 @@ body {
   .settings-shortcuts {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* ==========================================================================
+   ANIMAÇÃO DE ESPERA (MODO VITRINE / IDLE)
+   Ativa apenas na Tela Principal (#start-board.idle-animation) e no fundo
+   desfocado dos menus (.bg-board-glow.idle-animation). Totalmente isolada
+   da Tela de Jogo (#game-board).
+   ========================================================================== */
+@keyframes idle-ring-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulso sequencial por quadrante usando propriedades performáticas (opacity/filter/transform) */
+@keyframes idle-pad-pulse {
+  0%,
+  25%,
+  100% {
+    opacity: 0.65;
+    filter: brightness(0.7) saturate(0.92);
+    transform: scale(1);
+  }
+  12.5% {
+    opacity: 1;
+    filter: brightness(1.42) saturate(1.25) drop-shadow(0 0 26px var(--pad-pulse-glow));
+    transform: scale(1.016);
+  }
+}
+
+/* Rotação RGB contínua em sentido horário nos anéis (o texto central permanece 100% fixo) */
+.idle-animation .board-outer-ring::before,
+.idle-animation .board-outer-ring::after,
+.idle-animation .board-center-ring::before,
+.idle-animation .board-center-ring::after,
+.idle-animation .bg-ring::before {
+  background: conic-gradient(
+    from 270deg,
+    #e8fbff 0deg,
+    #14b8ff 24deg,
+    #ff3b3b 95deg,
+    #ffe600 185deg,
+    #22ff22 275deg,
+    #66dbff 340deg,
+    #e8fbff 360deg
+  );
+  animation: idle-ring-spin var(--cycle-duration) linear infinite;
+  will-change: transform;
+}
+
+/* Pulso sequencial sincronizado com os anéis: Azul -> Vermelho -> Amarelo -> Verde */
+.idle-animation .pad,
+.idle-animation .bg-quad {
+  animation: idle-pad-pulse var(--cycle-duration) ease-in-out infinite;
+  will-change: transform, opacity, filter;
+}
+
+/* 0% a 25%: Azul (superior esquerdo) */
+.idle-animation .pad--blue,
+.idle-animation .bg-quad--blue {
+  animation-delay: 0s;
+}
+
+/* 25% a 50%: Vermelho (superior direito) */
+.idle-animation .pad--red,
+.idle-animation .bg-quad--red {
+  animation-delay: calc(var(--cycle-duration) * -0.75);
+}
+
+/* 50% a 75%: Amarelo (inferior direito) */
+.idle-animation .pad--yellow,
+.idle-animation .bg-quad--yellow {
+  animation-delay: calc(var(--cycle-duration) * -0.5);
+}
+
+/* 75% a 100%: Verde (inferior esquerdo) */
+.idle-animation .pad--green,
+.idle-animation .bg-quad--green {
+  animation-delay: calc(var(--cycle-duration) * -0.25);
+}
+
+.idle-animation .pad--showcase:hover,
+.idle-animation .pad--showcase:focus-visible {
+  border-color: #ffffff;
+}
+
+/* Acessibilidade: desativa animações contínuas quando o usuário prefere movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  .idle-animation .board-outer-ring::before,
+  .idle-animation .board-outer-ring::after,
+  .idle-animation .board-center-ring::before,
+  .idle-animation .board-center-ring::after,
+  .idle-animation .bg-ring::before,
+  .idle-animation .pad,
+  .idle-animation .bg-quad,
+  .start-prompt-btn {
+    animation: none;
+  }
+
+  .idle-animation .pad,
+  .idle-animation .bg-quad {
+    opacity: 1;
+    filter: none;
+    transform: none;
   }
 }
