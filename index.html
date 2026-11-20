@@ -624,7 +624,48 @@
   </div>
 
   <!-- ======================================================================
-       TOAST DE NOTIFICAÇÕES (MODO ONLINE EM DESENVOLVIMENTO / ELIMINAÇÃO)
+       MODAL DE LOBBY ONLINE (SALA DE ESPERA)
+       Exibe código da sala, cópia rápida, slots conectados e início pelo Host.
+       ====================================================================== -->
+  <div id="modal-lobby" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="lobby-title" hidden>
+    <div class="neon-modal neon-modal--dialog neon-modal--lobby">
+      <h2 id="lobby-title" class="modal-heading">Sala de Espera</h2>
+
+      <!-- Bloco do código da sala com botão Copiar Código -->
+      <div class="lobby-code-card">
+        <span class="lobby-code-card__label">Código da Sala</span>
+        <div class="lobby-code-card__row">
+          <strong id="lobby-room-code" class="lobby-code">GENIUS0000</strong>
+          <button type="button" id="btn-lobby-copy" class="lobby-copy-btn">
+            Copiar Código
+          </button>
+        </div>
+      </div>
+
+      <!-- Badges de dificuldade e quantidade conectada -->
+      <div class="lobby-meta">
+        <span id="lobby-difficulty-badge" class="lobby-meta__badge">Dificuldade: Médio</span>
+        <span id="lobby-count-badge" class="lobby-meta__badge">1/2 conectados</span>
+      </div>
+
+      <!-- Lista em tempo real dos slots de jogadores -->
+      <ul id="lobby-slots" class="lobby-slots" aria-live="polite"></ul>
+
+      <p id="lobby-hint" class="lobby-hint">Aguardando pelo menos 2 jogadores conectados...</p>
+
+      <div class="dialog-actions lobby-actions">
+        <button type="button" id="btn-lobby-start" class="cta-green-btn dialog-btn" disabled>
+          Iniciar Partida
+        </button>
+        <button type="button" id="btn-lobby-leave" class="pill-btn pill-btn--red dialog-btn">
+          Sair da Sala
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       TOAST DE NOTIFICAÇÕES (ERROS / AVISOS ONLINE / ELIMINAÇÃO)
        ====================================================================== -->
   <div id="toast" class="toast" role="status" aria-live="polite" hidden>
     <span id="toast-message"></span>

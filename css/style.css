@@ -1332,6 +1332,12 @@ body {
   box-shadow: 0 0 10px rgba(255, 230, 0, 0.55);
 }
 
+/* Destaque do card pertencente ao jogador local no modo online */
+.player-card.player-card--self {
+  background: rgba(16, 22, 36, 0.96);
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.08);
+}
+
 /* Destaque do jogador da vez */
 .player-card.is-current {
   transform: scale(1.05);
@@ -1661,6 +1667,198 @@ body {
 .rules-confirm-btn:active {
   background: #166534;
   transform: scale(0.99);
+}
+
+/* ==========================================================================
+   MODAL DE LOBBY ONLINE (SALA DE ESPERA)
+   ========================================================================== */
+.neon-modal--lobby {
+  width: min(100%, 540px);
+  max-height: 85dvh;
+  gap: 14px;
+}
+
+.lobby-code-card {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: rgba(15, 20, 34, 0.88);
+  border: 1.5px solid rgba(20, 184, 255, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-code-card__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.lobby-code-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lobby-code {
+  font-size: clamp(1.35rem, 4.5vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--neon-blue-bright);
+  text-shadow: 0 0 14px rgba(20, 184, 255, 0.45);
+}
+
+.lobby-copy-btn {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--neon-blue);
+  background: rgba(20, 184, 255, 0.18);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 0.15s ease, transform 0.12s ease;
+}
+
+.lobby-copy-btn:hover {
+  background: rgba(20, 184, 255, 0.34);
+  transform: translateY(-1px);
+}
+
+.lobby-meta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lobby-meta__badge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.lobby-slots {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-slot {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(14, 19, 30, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lobby-slot--blue { border-color: rgba(20, 184, 255, 0.55); }
+.lobby-slot--red { border-color: rgba(255, 59, 59, 0.55); }
+.lobby-slot--green { border-color: rgba(34, 255, 34, 0.55); }
+.lobby-slot--yellow { border-color: rgba(255, 230, 0, 0.55); }
+
+.lobby-slot.is-empty {
+  opacity: 0.62;
+  border-style: dashed;
+}
+
+.lobby-slot__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.lobby-slot__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lobby-slot--blue .lobby-slot__dot { background: var(--neon-blue); box-shadow: 0 0 8px var(--neon-blue); }
+.lobby-slot--red .lobby-slot__dot { background: var(--neon-red); box-shadow: 0 0 8px var(--neon-red); }
+.lobby-slot--green .lobby-slot__dot { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+.lobby-slot--yellow .lobby-slot__dot { background: var(--neon-yellow); box-shadow: 0 0 8px var(--neon-yellow); }
+
+.lobby-status-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.lobby-status-pill--connected {
+  background: rgba(34, 255, 34, 0.16);
+  border: 1px solid rgba(34, 255, 34, 0.55);
+  color: var(--neon-green-bright);
+}
+
+.lobby-status-pill--waiting {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--text-muted);
+}
+
+.lobby-hint {
+  margin: 0;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.lobby-actions {
+  flex-shrink: 0;
+}
+
+.lobby-actions.is-guest,
+.dialog-actions.is-single {
+  grid-template-columns: 1fr;
+}
+
+.lobby-actions .dialog-btn[hidden],
+.dialog-actions .dialog-btn[hidden] {
+  display: none;
+}
+
+.cta-green-btn:disabled,
+.dialog-btn:disabled,
+.online-join-btn:disabled,
+.online-create-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.45);
+  transform: none;
+  box-shadow: none;
 }
 
 .record-badge {
