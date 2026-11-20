@@ -1,0 +1,12 @@
+{
+  "name": "genius-web",
+  "version": "1.0.0",
+  "description": "Jogo Genius (Simon Says) responsivo em HTML5, CSS3 e JavaScript Vanilla com multiplayer local e online via Firebase Realtime Database.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build:env": "node scripts/build-env.js",
+    "dev": "node scripts/build-env.js && npx serve .",
+    "test": "node --test tests/gameLogic.test.js"
+  }
+}

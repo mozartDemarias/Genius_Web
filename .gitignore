@@ -1,0 +1,21 @@
+# Variáveis de ambiente com credenciais sensíveis
+.env
+.env.local
+.env.*.local
+
+# Arquivo gerado automaticamente pelo scripts/build-env.js com chaves do Firebase
+js/firebaseConfig.js
+
+# Dependências e caches de pacotes
+node_modules/
+
+# Arquivos temporários do sistema e IDEs
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+npm-debug.log*
+
+# Diretórios temporários de build/deploy
+.vercel/
+.netlify/

@@ -146,7 +146,7 @@ export function getLocalPlayerId() {
 async function getDb() {
   if (!isFirebaseConfigured()) {
     throw new OnlineError(
-      'Firebase ainda não configurado. Cole suas credenciais em js/firebaseConfig.js!'
+      'Firebase ainda não configurado. Preencha o .env e execute npm run build:env!'
     );
   }
 
