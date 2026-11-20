@@ -1,7 +1,8 @@
 /* ==========================================================================
-   GENIUS — ESTILOS DARK / NEON E RESPONSIVIDADE
-   Reproduz a estética dark/neon das 5 telas de referência utilizando apenas
-   CSS3 puro (variáveis CSS, Flexbox, CSS Grid, máscaras e media queries).
+   GENIUS — ESTILOS DARK / NEON, GEOMETRIA WIDESCREEN E RESPONSIVIDADE
+   Reproduz com fidelidade a geometria widescreen das telas de referência
+   (grade 2x2 de retângulos assimétricos, círculo central sobreposto e anel
+   externo gigante) utilizando apenas CSS3 puro.
    ========================================================================== */
 
 :root {
@@ -14,32 +15,37 @@
   --text-secondary: #b7c0d4;
   --text-muted: #7f899f;
 
-  /* Cores neon oficiais dos 4 quadrantes e dos 4 jogadores */
-  --neon-blue: #0099ff;
-  --neon-blue-bright: #5ce1ff;
-  --neon-blue-glow: rgba(0, 153, 255, 0.75);
+  /* Cores neon dos 4 quadrantes e jogadores */
+  --neon-blue: #14b8ff;
+  --neon-blue-dark: #0044cc;
+  --neon-blue-bright: #66dbff;
+  --neon-blue-glow: rgba(20, 184, 255, 0.72);
 
-  --neon-red: #ff1e3c;
-  --neon-red-bright: #ff6b81;
-  --neon-red-glow: rgba(255, 30, 60, 0.75);
+  --neon-red: #ff3b3b;
+  --neon-red-dark: #b30000;
+  --neon-red-bright: #ff7d7d;
+  --neon-red-glow: rgba(255, 59, 59, 0.72);
 
-  --neon-green: #00e640;
-  --neon-green-bright: #6bff92;
-  --neon-green-glow: rgba(0, 230, 64, 0.75);
+  --neon-green: #22ff22;
+  --neon-green-dark: #008800;
+  --neon-green-bright: #85ff85;
+  --neon-green-glow: rgba(34, 255, 34, 0.72);
 
-  --neon-yellow: #ffd91a;
-  --neon-yellow-bright: #fff380;
-  --neon-yellow-glow: rgba(255, 217, 26, 0.75);
+  --neon-yellow: #ffe600;
+  --neon-yellow-dark: #b38600;
+  --neon-yellow-bright: #fff375;
+  --neon-yellow-glow: rgba(255, 230, 0, 0.72);
 
   /* Tipografia limpa sem dependência de CDNs externos */
   --font-sans: 'Montserrat', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
 
-  /* Dimensões fluidas do tabuleiro */
-  --board-size-start: min(84vw, 66dvh, 520px);
-  --board-size-game: min(82vw, 56dvh, 470px);
+  /* Raios assimétricos e espaçamento da grade widescreen 2x2 */
+  --pad-r-outer: clamp(64px, 10.5vmin, 112px);
+  --pad-r-inner: clamp(18px, 2.6vmin, 28px);
+  --board-gap: clamp(18px, 2.2vmin, 26px);
 }
 
-/* Reset e segurança contra scroll horizontal em qualquer dispositivo */
+/* Reset global */
 *,
 *::before,
 *::after {
@@ -50,11 +56,11 @@ html,
 body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  min-height: 100dvh;
-  overflow-x: hidden;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
   background-color: var(--bg-deep);
-  background-image: radial-gradient(circle at 50% 45%, #0c101b 0%, #040508 72%);
+  background-image: radial-gradient(circle at 50% 48%, #0c101a 0%, #040508 75%);
   color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -78,7 +84,7 @@ body {
   border: 0;
 }
 
-/* Alto contraste para navegação via teclado */
+/* Alto contraste de foco para acessibilidade por teclado */
 :focus-visible {
   outline: 3px solid #ffffff;
   outline-offset: 3px;
@@ -86,6 +92,7 @@ body {
 
 /* ==========================================================================
    FUNDO DESFOCADO DOS MENUS (TELAS 2, 3 E 4)
+   Usa exatamente a mesma geometria widescreen 2x2 + anel gigante com blur(18px).
    ========================================================================== */
 .menu-bg-board {
   position: fixed;
@@ -100,23 +107,24 @@ body {
 
 .bg-board-glow {
   position: relative;
-  width: min(92vw, 76dvh, 590px);
-  aspect-ratio: 1 / 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: clamp(12px, 2.5vmin, 22px);
-  padding: clamp(18px, 3.8vmin, 32px);
-  border-radius: 50%;
-  filter: blur(16px) saturate(1.15);
+  width: min(80vw, 138dvh);
+  height: 76dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: blur(18px) saturate(1.15);
   opacity: 0.78;
 }
 
 .bg-ring {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: clamp(125dvh, 92vw, 165dvh);
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
-  padding: clamp(5px, 1vmin, 8px);
+  padding: 6px;
   background: conic-gradient(
     from 0deg,
     var(--neon-red) 12deg 78deg,
@@ -130,29 +138,40 @@ body {
   mask-composite: exclude;
 }
 
+.bg-quadrants {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: var(--board-gap);
+}
+
 .bg-quad {
   width: 100%;
   height: 100%;
 }
 
 .bg-quad--blue {
-  border-radius: 100% 18px 18px 18px;
-  background: radial-gradient(circle at 60% 60%, #1ea7ff 0%, #0058c4 85%);
+  border-radius: var(--pad-r-outer) var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-inner);
+  background: radial-gradient(circle at 46% 48%, #14b8ff 0%, #0044cc 90%);
 }
 
 .bg-quad--red {
-  border-radius: 18px 100% 18px 18px;
-  background: radial-gradient(circle at 40% 60%, #ff3b57 0%, #b00020 85%);
+  border-radius: var(--pad-r-inner) var(--pad-r-outer) var(--pad-r-inner) var(--pad-r-inner);
+  background: radial-gradient(circle at 54% 48%, #ff3b3b 0%, #b30000 90%);
 }
 
 .bg-quad--green {
-  border-radius: 18px 18px 18px 100%;
-  background: radial-gradient(circle at 60% 40%, #19f052 0%, #008224 85%);
+  border-radius: var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-outer);
+  background: radial-gradient(circle at 46% 52%, #22ff22 0%, #008800 90%);
 }
 
 .bg-quad--yellow {
-  border-radius: 18px 18px 100% 18px;
-  background: radial-gradient(circle at 40% 40%, #ffe640 0%, #b38900 85%);
+  border-radius: var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-outer) var(--pad-r-inner);
+  background: radial-gradient(circle at 54% 52%, #ffe600 0%, #b38600 90%);
 }
 
 .bg-center {
@@ -160,176 +179,230 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 44%;
-  height: 44%;
+  z-index: 2;
+  height: min(60%, 34vw);
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
-  background: #06080e;
+  background: #0c0c0e;
+  box-shadow: 0 0 0 14px #08090c;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(1.6rem, 5vmin, 2.8rem);
-  font-weight: 800;
+  font-size: clamp(1.8rem, 6vmin, 3.2rem);
+  font-weight: 900;
   color: rgba(255, 255, 255, 0.28);
 }
 
 /* ==========================================================================
-   SHELL E ESTRUTURA DE TELAS
+   SHELL E ESTRUTURA DE TELAS (100vw x 100dvh NO DESKTOP)
    ========================================================================== */
 .app-shell {
   position: relative;
   z-index: 1;
-  width: 100%;
-  min-height: 100dvh;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
 .screen {
   position: relative;
-  width: 100%;
-  min-height: 100dvh;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(12px, 3vmin, 28px);
 }
 
 /* ==========================================================================
-   TELA 1: TABULEIRO PRINCIPAL E PROMPT DE ENTRADA
+   TELA 1: TABULEIRO WIDESCREEN PRINCIPAL E PROMPT DE ENTRADA
    ========================================================================== */
 .screen--start {
-  gap: clamp(14px, 3vmin, 24px);
+  padding: clamp(12px, 2.2dvh, 24px) clamp(12px, 2vw, 28px) clamp(10px, 1.8dvh, 20px);
 }
 
 .start-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(18px, 3.2vmin, 28px);
-  width: 100%;
+  gap: clamp(12px, 2.4dvh, 24px);
 }
 
+/* Container retangular widescreen do tabuleiro (sem clip-path/pizza) */
 .genius-board {
   position: relative;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, #0e121c 0%, #05070b 75%);
-  padding: clamp(14px, 3.2vmin, 26px);
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.9);
 }
 
+/* Tela Principal: ~75% a 82% da largura e ~75% da altura da tela */
 .genius-board--showcase {
-  width: var(--board-size-start);
+  width: min(80vw, 138dvh);
+  height: 76dvh;
 }
 
+/* Tela de Jogo: dimensionada para encaixar com os cards laterais sem espaço morto */
 .genius-board--playable {
-  width: var(--board-size-game);
+  width: min(100%, 58vw, 108dvh);
+  height: min(76dvh, 72vw);
 }
 
-/* Anel externo circular com 4 cores neon e brilho externo/interno */
+/* Anel externo gigante por trás do tabuleiro: abraça as laterais e vaza no topo/base */
 .board-outer-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 125dvh;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(12, 14, 20, 0.35) 0%,
+    rgba(7, 9, 13, 0.72) 86%,
+    rgba(4, 5, 8, 0.92) 100%
+  );
+  box-shadow: inset 0 0 38px rgba(0, 0, 0, 0.78);
+}
+
+/* Na Tela Principal o tabuleiro é mais largo (~80vw), então o círculo acompanha essa largura */
+.genius-board--showcase .board-outer-ring {
+  height: clamp(125dvh, 92vw, 165dvh);
+}
+
+/* Borda fina nítida em conic-gradient no anel externo gigante */
+.board-outer-ring::before {
+  content: '';
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  padding: clamp(3px, 0.7vmin, 5px);
+  padding: clamp(3px, 0.45vmin, 5px);
   background: conic-gradient(
     from 0deg,
-    var(--neon-red) 10deg 80deg,
-    var(--neon-yellow) 100deg 170deg,
-    var(--neon-green) 190deg 260deg,
-    var(--neon-blue) 280deg 350deg,
+    var(--neon-red) 12deg 78deg,
+    var(--neon-yellow) 102deg 168deg,
+    var(--neon-green) 192deg 258deg,
+    var(--neon-blue) 282deg 348deg,
     var(--neon-red) 360deg
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  pointer-events: none;
-  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.28)) drop-shadow(0 0 28px rgba(0, 153, 255, 0.2));
 }
 
-/* Grade 2x2 dos quadrantes neon */
+/* Brilho neon difuso ao redor do anel externo gigante */
+.board-outer-ring::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  padding: 9px;
+  background: conic-gradient(
+    from 0deg,
+    var(--neon-red) 12deg 78deg,
+    var(--neon-yellow) 102deg 168deg,
+    var(--neon-green) 192deg 258deg,
+    var(--neon-blue) 282deg 348deg,
+    var(--neon-red) 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: blur(14px);
+  opacity: 0.72;
+  z-index: -1;
+}
+
+/* Grade 2x2 de retângulos widescreen largos */
 .board-quadrants {
   position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: clamp(10px, 2.4vmin, 20px);
+  gap: var(--board-gap);
 }
 
 .pad {
   position: relative;
+  width: 100%;
+  height: 100%;
   min-width: 48px;
   min-height: 48px;
-  border: 2px solid transparent;
+  border: 3px solid transparent;
   cursor: pointer;
   padding: 0;
   touch-action: manipulation;
   transition: transform 0.12s ease, filter 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
 }
 
-/* Cantos arredondados acompanhando a circunferência externa */
+/* Cantos arredondados assimétricos + gradientes radiais 3D neon */
 .pad--blue {
-  border-radius: 100% clamp(10px, 2vmin, 18px) clamp(10px, 2vmin, 18px) clamp(10px, 2vmin, 18px);
-  background: radial-gradient(circle at 62% 62%, #1da6ff 0%, #006fe6 62%, #0043a8 100%);
-  border-color: rgba(110, 212, 255, 0.72);
+  border-radius: var(--pad-r-outer) var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-inner);
+  background: radial-gradient(circle at 46% 48%, #14b8ff 0%, #0077ee 58%, #0044cc 100%);
+  border-color: var(--neon-blue-bright);
   box-shadow:
-    inset 0 0 22px rgba(155, 232, 255, 0.35),
-    0 0 20px rgba(0, 153, 255, 0.45);
+    inset 0 0 26px rgba(185, 240, 255, 0.35),
+    inset 0 -10px 24px rgba(0, 35, 130, 0.45),
+    0 0 26px rgba(20, 184, 255, 0.55);
 }
 
 .pad--red {
-  border-radius: clamp(10px, 2vmin, 18px) 100% clamp(10px, 2vmin, 18px) clamp(10px, 2vmin, 18px);
-  background: radial-gradient(circle at 38% 62%, #ff3d5a 0%, #e00028 62%, #990018 100%);
-  border-color: rgba(255, 130, 148, 0.72);
+  border-radius: var(--pad-r-inner) var(--pad-r-outer) var(--pad-r-inner) var(--pad-r-inner);
+  background: radial-gradient(circle at 54% 48%, #ff3b3b 0%, #dc0814 58%, #b30000 100%);
+  border-color: var(--neon-red-bright);
   box-shadow:
-    inset 0 0 22px rgba(255, 165, 180, 0.35),
-    0 0 20px rgba(255, 30, 60, 0.45);
+    inset 0 0 26px rgba(255, 180, 180, 0.35),
+    inset 0 -10px 24px rgba(120, 0, 0, 0.45),
+    0 0 26px rgba(255, 59, 59, 0.55);
 }
 
 .pad--green {
-  border-radius: clamp(10px, 2vmin, 18px) clamp(10px, 2vmin, 18px) clamp(10px, 2vmin, 18px) 100%;
-  background: radial-gradient(circle at 62% 38%, #22f55d 0%, #00b833 62%, #00751e 100%);
-  border-color: rgba(130, 255, 165, 0.72);
+  border-radius: var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-outer);
+  background: radial-gradient(circle at 46% 52%, #22ff22 0%, #00c418 58%, #008800 100%);
+  border-color: var(--neon-green-bright);
   box-shadow:
-    inset 0 0 22px rgba(170, 255, 195, 0.35),
-    0 0 20px rgba(0, 230, 64, 0.45);
+    inset 0 0 26px rgba(190, 255, 190, 0.35),
+    inset 0 -10px 24px rgba(0, 90, 0, 0.45),
+    0 0 26px rgba(34, 255, 34, 0.55);
 }
 
 .pad--yellow {
-  border-radius: clamp(10px, 2vmin, 18px) clamp(10px, 2vmin, 18px) 100% clamp(10px, 2vmin, 18px);
-  background: radial-gradient(circle at 38% 38%, #ffea47 0%, #e0b000 62%, #997000 100%);
-  border-color: rgba(255, 244, 140, 0.75);
+  border-radius: var(--pad-r-inner) var(--pad-r-inner) var(--pad-r-outer) var(--pad-r-inner);
+  background: radial-gradient(circle at 54% 52%, #ffe600 0%, #e0b400 58%, #b38600 100%);
+  border-color: var(--neon-yellow-bright);
   box-shadow:
-    inset 0 0 22px rgba(255, 250, 185, 0.35),
-    0 0 20px rgba(255, 217, 26, 0.45);
+    inset 0 0 26px rgba(255, 250, 185, 0.35),
+    inset 0 -10px 24px rgba(120, 88, 0, 0.45),
+    0 0 26px rgba(255, 230, 0, 0.55);
 }
 
-/* Na tela inicial os quadrantes permanecem com brilho vibrante constante */
+/* Tela inicial: realce discreto ao passar o mouse/focar */
 .pad--showcase:hover,
 .pad--showcase:focus-visible {
-  transform: scale(1.02);
-  filter: brightness(1.18);
+  transform: scale(1.012);
+  filter: brightness(1.16);
 }
 
-/* Durante a partida, quadrantes em espera ficam levemente mais contidos para alto contraste ao acender */
-.genius-board--playable .pad--blue {
-  filter: brightness(0.84) saturate(0.95);
-}
-.genius-board--playable .pad--red {
-  filter: brightness(0.84) saturate(0.95);
-}
-.genius-board--playable .pad--green {
-  filter: brightness(0.84) saturate(0.95);
-}
+/* Tela de jogo: quadrantes em repouso levemente contidos para maximizar contraste no .is-active */
+.genius-board--playable .pad--blue,
+.genius-board--playable .pad--red,
+.genius-board--playable .pad--green,
 .genius-board--playable .pad--yellow {
-  filter: brightness(0.84) saturate(0.95);
+  filter: brightness(0.84) saturate(0.96);
 }
 
 .genius-board--playable:not(.is-locked) .pad:hover {
@@ -343,45 +416,45 @@ body {
 
 /* Estado ACESO (alto contraste visual tanto no sorteio quanto no toque do jogador) */
 .pad.is-active {
-  transform: scale(1.025);
+  transform: scale(1.018);
   border-color: #ffffff;
-  z-index: 2;
+  z-index: 3;
 }
 
 .pad--blue.is-active {
-  filter: brightness(1.42) saturate(1.25);
-  background: radial-gradient(circle at 60% 60%, #b8ecff 0%, #24b6ff 45%, #0077ff 100%);
+  filter: brightness(1.42) saturate(1.22);
+  background: radial-gradient(circle at 46% 48%, #c4f0ff 0%, #26c2ff 45%, #0066ee 100%);
   box-shadow:
-    inset 0 0 34px #ffffff,
-    0 0 36px var(--neon-blue-bright),
-    0 0 64px var(--neon-blue);
+    inset 0 0 38px #ffffff,
+    0 0 40px var(--neon-blue-bright),
+    0 0 72px var(--neon-blue);
 }
 
 .pad--red.is-active {
-  filter: brightness(1.42) saturate(1.25);
-  background: radial-gradient(circle at 40% 60%, #ffc2cb 0%, #ff3b5b 45%, #e60026 100%);
+  filter: brightness(1.42) saturate(1.22);
+  background: radial-gradient(circle at 54% 48%, #ffc8c8 0%, #ff4747 45%, #cc0000 100%);
   box-shadow:
-    inset 0 0 34px #ffffff,
-    0 0 36px var(--neon-red-bright),
-    0 0 64px var(--neon-red);
+    inset 0 0 38px #ffffff,
+    0 0 40px var(--neon-red-bright),
+    0 0 72px var(--neon-red);
 }
 
 .pad--green.is-active {
-  filter: brightness(1.42) saturate(1.25);
-  background: radial-gradient(circle at 60% 40%, #c7ffd6 0%, #2eff6a 45%, #00c838 100%);
+  filter: brightness(1.42) saturate(1.22);
+  background: radial-gradient(circle at 46% 52%, #cbffcb 0%, #3bff3b 45%, #00a800 100%);
   box-shadow:
-    inset 0 0 34px #ffffff,
-    0 0 36px var(--neon-green-bright),
-    0 0 64px var(--neon-green);
+    inset 0 0 38px #ffffff,
+    0 0 40px var(--neon-green-bright),
+    0 0 72px var(--neon-green);
 }
 
 .pad--yellow.is-active {
-  filter: brightness(1.42) saturate(1.25);
-  background: radial-gradient(circle at 40% 40%, #fffbc2 0%, #ffea3b 45%, #e6b800 100%);
+  filter: brightness(1.42) saturate(1.22);
+  background: radial-gradient(circle at 54% 52%, #fffbc4 0%, #ffec3b 45%, #c99700 100%);
   box-shadow:
-    inset 0 0 34px #ffffff,
-    0 0 36px var(--neon-yellow-bright),
-    0 0 64px var(--neon-yellow);
+    inset 0 0 38px #ffffff,
+    0 0 40px var(--neon-yellow-bright),
+    0 0 72px var(--neon-yellow);
 }
 
 /* Animação de tremor em caso de erro */
@@ -397,19 +470,22 @@ body {
   80% { transform: translateX(6px); }
 }
 
-/* Círculo central (hub) sobreposto aos quadrantes */
+/* ==========================================================================
+   CÍRCULO CENTRAL (ESTRITAMENTE REDONDO, SOBREPOSTO À GRADE 2x2)
+   ========================================================================== */
 .board-center {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 46%;
-  height: 46%;
+  height: min(58%, 27vw);
+  width: auto;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 45%, #121622 0%, #06080e 78%);
+  background: radial-gradient(circle at 50% 42%, #16181f 0%, #0c0c0e 72%, #07080a 100%);
   box-shadow:
-    0 0 0 clamp(6px, 1.4vmin, 12px) #05070c,
-    0 0 36px rgba(0, 0, 0, 0.95);
+    0 0 0 clamp(10px, 1.5vmin, 18px) #090a0d,
+    0 14px 44px rgba(0, 0, 0, 0.96);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -417,23 +493,57 @@ body {
   pointer-events: none;
 }
 
+.board-center--start {
+  height: min(60%, 34vw);
+}
+
 .board-center-ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  padding: clamp(3px, 0.65vmin, 4px);
+  pointer-events: none;
+}
+
+/* Borda fina luminosa em conic-gradient (Azul TL, Vermelho TR, Amarelo BR, Verde BL) */
+.board-center-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: clamp(3px, 0.45vmin, 4px);
   background: conic-gradient(
     from 0deg,
-    var(--neon-red) 12deg 78deg,
-    var(--neon-yellow) 102deg 168deg,
-    var(--neon-green) 192deg 258deg,
-    var(--neon-blue) 282deg 348deg,
+    var(--neon-red) 10deg 80deg,
+    var(--neon-yellow) 100deg 170deg,
+    var(--neon-green) 190deg 260deg,
+    var(--neon-blue) 280deg 350deg,
     var(--neon-red) 360deg
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
+}
+
+/* Halo neon difuso ao redor do círculo central */
+.board-center-ring::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  padding: 8px;
+  background: conic-gradient(
+    from 0deg,
+    var(--neon-red) 10deg 80deg,
+    var(--neon-yellow) 100deg 170deg,
+    var(--neon-green) 190deg 260deg,
+    var(--neon-blue) 280deg 350deg,
+    var(--neon-red) 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: blur(10px);
+  opacity: 0.8;
 }
 
 .board-center-content {
@@ -448,45 +558,48 @@ body {
   width: 100%;
 }
 
-/* Tipografia da tela inicial */
+/* Tipografia do círculo central na tela inicial */
 .brand-title {
   margin: 0;
-  font-size: clamp(1.7rem, 7.6vmin, 3.35rem);
+  font-size: clamp(2rem, 8.8vmin, 4.4rem);
   font-weight: 900;
   letter-spacing: 0.04em;
   line-height: 1;
   color: #ffffff;
-  text-shadow: 0 0 18px rgba(255, 255, 255, 0.32);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.32);
 }
 
 .brand-subtitle {
-  margin: clamp(4px, 0.9vmin, 8px) 0 0;
-  font-size: clamp(0.55rem, 1.45vmin, 0.78rem);
+  margin: clamp(5px, 1vmin, 10px) 0 0;
+  font-size: clamp(0.62rem, 1.7vmin, 0.95rem);
   font-weight: 500;
   color: #e6ebf5;
   letter-spacing: 0.02em;
   line-height: 1.25;
 }
 
+/* Texto de entrada posicionado logo abaixo dos quadrantes inferiores */
 .start-prompt-btn {
+  position: relative;
+  z-index: 5;
   min-height: 48px;
   min-width: 48px;
-  padding: 10px 22px;
+  padding: 8px 24px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 999px;
   color: #ffffff;
   font-family: inherit;
-  font-size: clamp(0.95rem, 2.4vw, 1.3rem);
+  font-size: clamp(1rem, 2.5vmin, 1.45rem);
   font-weight: 600;
   letter-spacing: 0.01em;
-  text-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.55);
   cursor: pointer;
   animation: pulse-prompt 2.4s ease-in-out infinite;
 }
 
 @keyframes pulse-prompt {
-  0%, 100% { opacity: 0.78; transform: scale(1); }
+  0%, 100% { opacity: 0.82; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.02); }
 }
 
@@ -613,8 +726,8 @@ body {
 }
 
 .mode-btn--online {
-  background: linear-gradient(90deg, rgba(0, 128, 255, 0.34) 0%, rgba(16, 18, 28, 0.85) 50%, rgba(255, 30, 60, 0.34) 100%);
-  box-shadow: -8px 0 26px rgba(0, 153, 255, 0.28), 8px 0 26px rgba(255, 30, 60, 0.28);
+  background: linear-gradient(90deg, rgba(20, 184, 255, 0.34) 0%, rgba(16, 18, 28, 0.85) 50%, rgba(255, 59, 59, 0.34) 100%);
+  box-shadow: -8px 0 26px rgba(20, 184, 255, 0.28), 8px 0 26px rgba(255, 59, 59, 0.28);
 }
 
 .mode-btn--online::before {
@@ -622,8 +735,8 @@ body {
 }
 
 .mode-btn--local {
-  background: linear-gradient(90deg, rgba(0, 230, 64, 0.3) 0%, rgba(16, 18, 28, 0.85) 50%, rgba(255, 217, 26, 0.3) 100%);
-  box-shadow: -8px 0 26px rgba(0, 230, 64, 0.25), 8px 0 26px rgba(255, 217, 26, 0.25);
+  background: linear-gradient(90deg, rgba(34, 255, 34, 0.28) 0%, rgba(16, 18, 28, 0.85) 50%, rgba(255, 230, 0, 0.28) 100%);
+  box-shadow: -8px 0 26px rgba(34, 255, 34, 0.25), 8px 0 26px rgba(255, 230, 0, 0.25);
 }
 
 .mode-btn--local::before {
@@ -681,8 +794,8 @@ body {
   min-height: 48px;
   padding: 0;
   border-radius: 14px;
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  background: rgba(12, 16, 26, 0.72);
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  background: rgba(12, 16, 26, 0.78);
   backdrop-filter: blur(10px);
   color: var(--text-primary);
   display: inline-flex;
@@ -699,8 +812,8 @@ body {
 }
 
 .icon-btn:hover {
-  border-color: rgba(255, 255, 255, 0.65);
-  background: rgba(25, 32, 48, 0.9);
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(25, 32, 48, 0.92);
   transform: translateY(-1px);
 }
 
@@ -783,40 +896,40 @@ body {
 /* Cores individuais dos botões pill */
 .pill-btn--blue {
   border-color: var(--neon-blue);
-  box-shadow: 0 0 12px rgba(0, 153, 255, 0.25);
+  box-shadow: 0 0 12px rgba(20, 184, 255, 0.25);
 }
 .pill-btn--blue.is-selected {
-  background: linear-gradient(180deg, rgba(0, 153, 255, 0.65), rgba(0, 88, 196, 0.85));
+  background: linear-gradient(180deg, rgba(20, 184, 255, 0.65), rgba(0, 68, 204, 0.85));
   border-color: var(--neon-blue-bright);
   box-shadow: 0 0 22px var(--neon-blue-glow);
 }
 
 .pill-btn--red {
   border-color: var(--neon-red);
-  box-shadow: 0 0 12px rgba(255, 30, 60, 0.25);
+  box-shadow: 0 0 12px rgba(255, 59, 59, 0.25);
 }
 .pill-btn--red.is-selected {
-  background: linear-gradient(180deg, rgba(255, 38, 72, 0.72), rgba(180, 0, 32, 0.9));
+  background: linear-gradient(180deg, rgba(255, 59, 59, 0.72), rgba(179, 0, 0, 0.9));
   border-color: var(--neon-red-bright);
   box-shadow: 0 0 24px var(--neon-red-glow);
 }
 
 .pill-btn--yellow {
   border-color: var(--neon-yellow);
-  box-shadow: 0 0 12px rgba(255, 217, 26, 0.25);
+  box-shadow: 0 0 12px rgba(255, 230, 0, 0.25);
 }
 .pill-btn--yellow.is-selected {
-  background: linear-gradient(180deg, rgba(255, 217, 26, 0.55), rgba(168, 128, 0, 0.85));
+  background: linear-gradient(180deg, rgba(255, 230, 0, 0.55), rgba(179, 134, 0, 0.85));
   border-color: var(--neon-yellow-bright);
   box-shadow: 0 0 22px var(--neon-yellow-glow);
 }
 
 .pill-btn--green {
   border-color: var(--neon-green);
-  box-shadow: 0 0 12px rgba(0, 230, 64, 0.25);
+  box-shadow: 0 0 12px rgba(34, 255, 34, 0.25);
 }
 .pill-btn--green.is-selected {
-  background: linear-gradient(180deg, rgba(0, 230, 64, 0.62), rgba(0, 130, 36, 0.85));
+  background: linear-gradient(180deg, rgba(34, 255, 34, 0.62), rgba(0, 136, 0, 0.85));
   border-color: var(--neon-green-bright);
   box-shadow: 0 0 22px var(--neon-green-glow);
 }
@@ -835,7 +948,7 @@ body {
   padding: 14px 36px;
   border-radius: 999px;
   border: 2px solid var(--neon-green-bright);
-  background: radial-gradient(circle at 50% 40%, #1ef055 0%, #00a82e 65%, #006b1c 100%);
+  background: radial-gradient(circle at 50% 40%, #22ff22 0%, #00b818 65%, #007700 100%);
   color: #ffffff;
   font-family: inherit;
   font-size: clamp(1.15rem, 3vw, 1.45rem);
@@ -849,7 +962,7 @@ body {
 .cta-green-btn:hover {
   transform: translateY(-2px);
   filter: brightness(1.12);
-  box-shadow: 0 0 34px rgba(107, 255, 146, 0.85);
+  box-shadow: 0 0 34px rgba(133, 255, 133, 0.85);
 }
 
 /* Controles específicos da tela Online */
@@ -881,7 +994,7 @@ body {
 .invite-input:focus {
   outline: none;
   border-color: var(--neon-blue-bright);
-  box-shadow: 0 0 14px rgba(0, 153, 255, 0.45);
+  box-shadow: 0 0 14px rgba(20, 184, 255, 0.45);
 }
 
 .online-join-btn {
@@ -890,14 +1003,14 @@ body {
   padding: 10px 24px;
   border-radius: 999px;
   border: 2px solid var(--neon-blue);
-  background: linear-gradient(180deg, rgba(0, 118, 224, 0.55), rgba(0, 58, 128, 0.85));
+  background: linear-gradient(180deg, rgba(20, 184, 255, 0.52), rgba(0, 68, 204, 0.85));
   color: var(--text-primary);
   font-family: inherit;
   font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
-  box-shadow: 0 0 16px rgba(0, 153, 255, 0.35);
+  box-shadow: 0 0 16px rgba(20, 184, 255, 0.35);
   transition: transform 0.14s ease, filter 0.16s ease;
 }
 
@@ -918,14 +1031,14 @@ body {
   padding: 10px 28px;
   border-radius: 999px;
   border: 2px solid var(--neon-green);
-  background: linear-gradient(180deg, rgba(0, 165, 48, 0.48), rgba(0, 82, 24, 0.85));
+  background: linear-gradient(180deg, rgba(34, 255, 34, 0.44), rgba(0, 110, 0, 0.85));
   color: var(--text-primary);
   font-family: inherit;
   font-size: 1.08rem;
   font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
-  box-shadow: 0 0 18px rgba(0, 230, 64, 0.3);
+  box-shadow: 0 0 18px rgba(34, 255, 34, 0.3);
   transition: transform 0.14s ease, filter 0.16s ease;
 }
 
@@ -935,29 +1048,38 @@ body {
 }
 
 /* ==========================================================================
-   TELA 5: TELA DE JOGO (IN-GAME)
+   TELA 5: TELA DE JOGO (IN-GAME WIDESCREEN + CARDS LATERAIS)
    ========================================================================== */
 .screen--game {
-  justify-content: space-between;
-  padding: clamp(10px, 2.2vmin, 22px);
-  gap: clamp(8px, 2vmin, 16px);
+  padding: 0;
+  justify-content: center;
 }
 
+/* Barra superior flutuante no desktop para não roubar altura nem gerar faixa morta no topo */
 .game-topbar {
-  width: 100%;
-  max-width: 1280px;
+  position: fixed;
+  top: clamp(14px, 2.4dvh, 24px);
+  left: clamp(16px, 2vw, 28px);
+  right: clamp(16px, 2vw, 28px);
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  pointer-events: none;
+}
+
+.game-topbar > * {
+  pointer-events: auto;
 }
 
 .round-pill {
   min-height: 42px;
   padding: 6px 18px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(14, 18, 28, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(12, 16, 26, 0.82);
+  backdrop-filter: blur(10px);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -970,16 +1092,16 @@ body {
   font-size: 1.05rem;
 }
 
-/* Palco central: Grid desktop com cards laterais ao redor do tabuleiro */
+/* Palco central: preenche 100vw x 100dvh distribuindo cards laterais e tabuleiro widescreen */
 .game-stage {
-  width: 100%;
-  max-width: 1180px;
-  flex: 1;
+  width: 100vw;
+  height: 100dvh;
+  padding: clamp(12px, 2vw, 28px);
   display: grid;
   align-items: center;
   justify-items: center;
-  gap: clamp(12px, 2.6vmin, 28px);
-  grid-template-columns: minmax(150px, 195px) auto minmax(150px, 195px);
+  gap: clamp(12px, 2vw, 28px);
+  grid-template-columns: minmax(150px, 16vw) minmax(0, 1fr) minmax(150px, 16vw);
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
     'p1 board p2'
@@ -988,6 +1110,8 @@ body {
 
 .board-wrapper {
   grid-area: board;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -998,7 +1122,7 @@ body {
 #player-card-3 { grid-area: p3; }
 #player-card-4 { grid-area: p4; }
 
-/* Centraliza verticalmente os cards quando há apenas 1 ou 2 jogadores no desktop */
+/* Centraliza verticalmente os cards quando há 1 ou 2 jogadores no desktop */
 .game-stage[data-players='1'] #player-card-1,
 .game-stage[data-players='2'] #player-card-1,
 .game-stage[data-players='2'] #player-card-2 {
@@ -1008,11 +1132,11 @@ body {
 
 /* Centro do tabuleiro durante o jogo */
 .board-center-content--game {
-  gap: clamp(3px, 0.9vmin, 8px);
+  gap: clamp(4px, 1vmin, 9px);
 }
 
 .hub-logo {
-  font-size: clamp(0.9rem, 3.2vmin, 1.55rem);
+  font-size: clamp(1.05rem, 3.6vmin, 1.85rem);
   font-weight: 900;
   letter-spacing: 0.05em;
   line-height: 1;
@@ -1022,25 +1146,25 @@ body {
 .hub-mini-colors {
   display: flex;
   align-items: center;
-  gap: clamp(4px, 0.9vmin, 8px);
+  gap: clamp(5px, 1vmin, 9px);
 }
 
 .mini-sq {
-  width: clamp(7px, 1.5vmin, 13px);
-  height: clamp(7px, 1.5vmin, 13px);
+  width: clamp(9px, 1.7vmin, 15px);
+  height: clamp(9px, 1.7vmin, 15px);
   border-radius: 3px;
 }
 
-.mini-sq--blue { background: var(--neon-blue); box-shadow: 0 0 6px var(--neon-blue); }
-.mini-sq--red { background: var(--neon-red); box-shadow: 0 0 6px var(--neon-red); }
-.mini-sq--green { background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green); }
-.mini-sq--yellow { background: var(--neon-yellow); box-shadow: 0 0 6px var(--neon-yellow); }
+.mini-sq--blue { background: var(--neon-blue); box-shadow: 0 0 8px var(--neon-blue); }
+.mini-sq--red { background: var(--neon-red); box-shadow: 0 0 8px var(--neon-red); }
+.mini-sq--green { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+.mini-sq--yellow { background: var(--neon-yellow); box-shadow: 0 0 8px var(--neon-yellow); }
 
 .hub-divider {
   width: 78%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
-  margin: clamp(1px, 0.4vmin, 4px) 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+  margin: clamp(2px, 0.5vmin, 5px) 0;
 }
 
 .hub-status {
@@ -1051,16 +1175,16 @@ body {
 }
 
 .hub-status__prefix {
-  font-size: clamp(0.66rem, 1.8vmin, 0.98rem);
+  font-size: clamp(0.75rem, 2.1vmin, 1.12rem);
   font-weight: 500;
   color: var(--text-secondary);
 }
 
 .hub-status__main {
-  font-size: clamp(0.85rem, 2.7vmin, 1.45rem);
+  font-size: clamp(1rem, 3.2vmin, 1.7rem);
   font-weight: 800;
   color: var(--text-primary);
-  text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.38);
 }
 
 /* ==========================================================================
@@ -1068,11 +1192,12 @@ body {
    ========================================================================== */
 .player-card {
   position: relative;
+  z-index: 6;
   width: 100%;
-  max-width: 185px;
-  padding: clamp(10px, 1.8vmin, 16px) clamp(12px, 2vmin, 18px);
+  max-width: 195px;
+  padding: clamp(12px, 1.8vmin, 18px) clamp(12px, 2vmin, 20px);
   border-radius: 20px;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
   background: var(--bg-card);
   display: flex;
   flex-direction: column;
@@ -1083,7 +1208,7 @@ body {
 
 .player-card__name {
   margin: 0;
-  font-size: clamp(0.88rem, 2vw, 1.05rem);
+  font-size: clamp(0.9rem, 2vmin, 1.1rem);
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -1091,12 +1216,12 @@ body {
 .player-card__score {
   margin: 0;
   line-height: 1;
-  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  font-size: clamp(1rem, 2.2vmin, 1.25rem);
   color: var(--text-secondary);
 }
 
 .lives-current {
-  font-size: clamp(1.45rem, 3.2vw, 1.85rem);
+  font-size: clamp(1.5rem, 3.4vmin, 1.95rem);
   font-weight: 800;
   color: var(--text-primary);
 }
@@ -1105,13 +1230,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 7px;
   width: 100%;
 }
 
 .life-block {
-  width: clamp(24px, 4.5vmin, 34px);
-  height: clamp(16px, 2.6vmin, 22px);
+  width: clamp(26px, 4.4vmin, 38px);
+  height: clamp(16px, 2.6vmin, 23px);
   border-radius: 6px;
   transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease;
 }
@@ -1126,41 +1251,41 @@ body {
 .player-card--blue {
   --card-accent: var(--neon-blue);
   --card-glow: var(--neon-blue-glow);
-  border-color: rgba(0, 153, 255, 0.55);
+  border-color: rgba(20, 184, 255, 0.6);
 }
 .player-card--blue .life-block {
-  background: linear-gradient(180deg, #35b4ff, #0077e6);
-  box-shadow: 0 0 10px rgba(0, 153, 255, 0.55);
+  background: linear-gradient(180deg, #3ac4ff, #0044cc);
+  box-shadow: 0 0 10px rgba(20, 184, 255, 0.55);
 }
 
 .player-card--red {
   --card-accent: var(--neon-red);
   --card-glow: var(--neon-red-glow);
-  border-color: rgba(255, 30, 60, 0.55);
+  border-color: rgba(255, 59, 59, 0.6);
 }
 .player-card--red .life-block {
-  background: linear-gradient(180deg, #ff546e, #d40024);
-  box-shadow: 0 0 10px rgba(255, 30, 60, 0.55);
+  background: linear-gradient(180deg, #ff6363, #b30000);
+  box-shadow: 0 0 10px rgba(255, 59, 59, 0.55);
 }
 
 .player-card--green {
   --card-accent: var(--neon-green);
   --card-glow: var(--neon-green-glow);
-  border-color: rgba(0, 230, 64, 0.55);
+  border-color: rgba(34, 255, 34, 0.6);
 }
 .player-card--green .life-block {
-  background: linear-gradient(180deg, #3eff75, #00a82e);
-  box-shadow: 0 0 10px rgba(0, 230, 64, 0.55);
+  background: linear-gradient(180deg, #4dff4d, #008800);
+  box-shadow: 0 0 10px rgba(34, 255, 34, 0.55);
 }
 
 .player-card--yellow {
   --card-accent: var(--neon-yellow);
   --card-glow: var(--neon-yellow-glow);
-  border-color: rgba(255, 217, 26, 0.55);
+  border-color: rgba(255, 230, 0, 0.6);
 }
 .player-card--yellow .life-block {
-  background: linear-gradient(180deg, #ffea59, #d4a300);
-  box-shadow: 0 0 10px rgba(255, 217, 26, 0.55);
+  background: linear-gradient(180deg, #fff059, #b38600);
+  box-shadow: 0 0 10px rgba(255, 230, 0, 0.55);
 }
 
 /* Destaque do jogador da vez */
@@ -1178,7 +1303,7 @@ body {
 
 @keyframes card-error-flash {
   0%, 100% { box-shadow: 0 0 0 transparent; }
-  35% { box-shadow: 0 0 28px rgba(255, 30, 60, 0.95); border-color: #ffffff; }
+  35% { box-shadow: 0 0 28px rgba(255, 59, 59, 0.95); border-color: #ffffff; }
 }
 
 /* Estado ELIMINADO (0/3 vidas) */
@@ -1194,7 +1319,7 @@ body {
   margin-top: 2px;
   padding: 3px 10px;
   border-radius: 999px;
-  background: rgba(255, 30, 60, 0.22);
+  background: rgba(255, 59, 59, 0.22);
   border: 1px solid var(--neon-red);
   color: #ff99a8;
   font-size: 0.7rem;
@@ -1252,7 +1377,7 @@ body {
   padding: 12px 18px;
   border-radius: 16px;
   border: 1.5px solid var(--neon-blue);
-  background: rgba(0, 153, 255, 0.14);
+  background: rgba(20, 184, 255, 0.14);
   color: var(--text-primary);
   font-family: inherit;
   font-size: 1rem;
@@ -1331,7 +1456,7 @@ body {
 .record-badge {
   padding: 5px 14px;
   border-radius: 999px;
-  background: rgba(255, 217, 26, 0.2);
+  background: rgba(255, 230, 0, 0.2);
   border: 1px solid var(--neon-yellow);
   color: var(--neon-yellow-bright);
   font-size: 0.78rem;
@@ -1389,7 +1514,7 @@ body {
   border: 1.5px solid var(--neon-blue-bright);
   background: rgba(10, 14, 24, 0.94);
   backdrop-filter: blur(14px);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.8), 0 0 22px rgba(0, 153, 255, 0.35);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.8), 0 0 22px rgba(20, 184, 255, 0.35);
   color: var(--text-primary);
   text-align: center;
   font-size: 0.95rem;
@@ -1405,14 +1530,119 @@ body {
 }
 
 /* ==========================================================================
-   RESPONSIVIDADE (TABLET E MOBILE ATÉ 360px)
+   RESPONSIVIDADE MOBILE (< 768px ATÉ 360px)
+   Tabuleiro ocupa ~92% da largura mantendo os 4 retângulos arredondados,
+   círculo central proporcional e cards dos jogadores em 2x2 acima/abaixo.
    ========================================================================== */
-@media (max-width: 919px) {
+@media (max-width: 767px) {
   :root {
-    --board-size-game: min(86vw, 45dvh, 410px);
+    --pad-r-outer: clamp(38px, 11vw, 62px);
+    --pad-r-inner: clamp(12px, 3vw, 18px);
+    --board-gap: clamp(10px, 2.8vw, 16px);
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .app-shell {
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
+  .screen {
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding: 14px 12px 20px;
+  }
+
+  .start-stage {
+    height: auto;
+    gap: 20px;
+  }
+
+  .genius-board--showcase,
+  .genius-board--playable {
+    width: 92vw;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .genius-board--showcase .board-outer-ring,
+  .board-outer-ring {
+    width: 112vw;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .bg-board-glow {
+    width: 92vw;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .bg-ring {
+    width: 112vw;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .board-center,
+  .board-center--start,
+  .bg-center {
+    height: 54%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .brand-title {
+    font-size: clamp(1.5rem, 8.5vw, 2.5rem);
+  }
+
+  .brand-subtitle {
+    font-size: clamp(0.5rem, 2.2vw, 0.72rem);
+  }
+
+  .hub-logo {
+    font-size: clamp(0.9rem, 4.4vw, 1.35rem);
+  }
+
+  .hub-status__prefix {
+    font-size: clamp(0.62rem, 2.8vw, 0.85rem);
+  }
+
+  .hub-status__main {
+    font-size: clamp(0.8rem, 4vw, 1.2rem);
+  }
+
+  .screen--game {
+    justify-content: flex-start;
+    padding: 12px 10px 20px;
+    gap: 12px;
+  }
+
+  .game-topbar {
+    position: static;
+    width: 100%;
+    pointer-events: auto;
   }
 
   .game-stage {
+    width: 100%;
+    height: auto;
+    flex: 1;
+    padding: 4px 0 8px;
     gap: 10px;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto auto;
@@ -1442,8 +1672,13 @@ body {
     grid-row: auto;
   }
 
+  .board-wrapper {
+    height: auto;
+    padding: 6px 0;
+  }
+
   .player-card {
-    max-width: 240px;
+    max-width: 220px;
     padding: 8px 12px;
     border-radius: 16px;
     gap: 5px;
@@ -1461,17 +1696,11 @@ body {
     width: 24px;
     height: 14px;
   }
-}
 
-@media (max-width: 520px) {
   .floating-back-btn {
     position: static;
     align-self: flex-start;
     margin-bottom: 10px;
-  }
-
-  .screen--modal {
-    justify-content: center;
   }
 
   .neon-modal {
