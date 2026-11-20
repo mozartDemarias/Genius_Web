@@ -3,7 +3,10 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  />
   <meta name="theme-color" content="#05070c" />
   <title>GENIUS — Multiplayer Local</title>
   <!-- Folha de estilos pura (dark/neon, Flexbox, Grid e responsividade) -->
@@ -265,31 +268,55 @@
          Topo com Voltar/Configurações, cards dos jogadores e tabuleiro jogável.
          ==================================================================== -->
     <section id="screen-game" class="screen screen--game" aria-label="Tabuleiro do jogo Genius" hidden>
-      <!-- Barra superior de navegação e configurações -->
+      <!-- Barra superior dedicada (sem position fixed/absolute para evitar sobreposições no mobile) -->
       <header class="game-topbar">
-        <button type="button" id="btn-game-back" class="icon-btn" aria-label="Voltar para configuração da partida"
-          title="Voltar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
-            <path d="M19 12H5" />
-            <path d="M11 6l-6 6 6 6" />
-          </svg>
-        </button>
+        <div class="topbar-group topbar-group--left">
+          <button type="button" id="btn-game-back" class="icon-btn" aria-label="Voltar para configuração da partida"
+            title="Voltar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 12H5" />
+              <path d="M11 6l-6 6 6 6" />
+            </svg>
+          </button>
+
+          <button type="button" id="btn-game-home" class="icon-btn" aria-label="Voltar para a Tela Inicial"
+            title="Tela Inicial">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 10.5L12 3l9 7.5" />
+              <path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5" />
+            </svg>
+          </button>
+        </div>
 
         <div class="round-pill" aria-live="polite">
           <span>Rodada</span>
           <strong id="hud-round">1</strong>
         </div>
 
-        <button type="button" id="btn-game-settings" class="icon-btn" aria-label="Abrir configurações da partida"
-          title="Configurações">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="3" />
-            <path
-              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg>
-        </button>
+        <div class="topbar-group topbar-group--right">
+          <button type="button" id="btn-game-fullscreen" class="icon-btn" aria-label="Ativar tela cheia"
+            aria-pressed="false" title="Tela cheia">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+              <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+              <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+              <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+            </svg>
+          </button>
+
+          <button type="button" id="btn-game-settings" class="icon-btn" aria-label="Abrir configurações da partida"
+            title="Configurações">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </button>
+        </div>
       </header>
 
       <!-- Palco principal: posiciona cards ao redor do tabuleiro (desktop) ou acima/abaixo (mobile) -->
@@ -415,6 +442,12 @@
           <span id="sound-status-text">Som: Ligado</span>
         </button>
 
+        <button type="button" id="btn-settings-fullscreen" class="settings-action-btn settings-action-btn--green"
+          aria-pressed="false">
+          <span id="fullscreen-status-icon" class="settings-action-btn__icon" aria-hidden="true"></span>
+          <span id="fullscreen-status-text">Tela Cheia: Desativada</span>
+        </button>
+
         <div class="settings-shortcuts">
           <span>Atalhos do teclado:</span>
           <div class="shortcut-badges">
@@ -434,6 +467,10 @@
           Fechar
         </button>
       </div>
+
+      <button type="button" id="btn-settings-home" class="pill-btn pill-btn--red dialog-btn dialog-btn--full">
+        Voltar para a Tela Inicial
+      </button>
     </div>
   </div>
 
@@ -469,6 +506,10 @@
           Menu
         </button>
       </div>
+
+      <button type="button" id="btn-endgame-home" class="pill-btn pill-btn--blue dialog-btn dialog-btn--full">
+        Voltar para a Tela Inicial
+      </button>
     </div>
   </div>
 

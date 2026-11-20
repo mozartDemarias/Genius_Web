@@ -40,6 +40,22 @@ const SOUND_ICONS = Object.freeze({
   </svg>`,
 });
 
+/** Ícones SVG inline usados nos botões de Tela Cheia (expandir e recolher). */
+const FULLSCREEN_ICONS = Object.freeze({
+  enter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+    <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+    <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+    <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+  </svg>`,
+  exit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+    <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+    <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+    <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+  </svg>`,
+});
+
 // ============================================================================
 // REFERÊNCIAS DE ELEMENTOS DO DOM
 // ============================================================================
@@ -54,6 +70,7 @@ const dom = {
   },
 
   // Tela inicial
+  startBoard: document.getElementById('start-board'),
   startPads: document.querySelectorAll('[data-start-pad]'),
   btnStartPrompt: document.getElementById('btn-start-prompt'),
 
@@ -78,6 +95,8 @@ const dom = {
 
   // Tela de jogo
   btnGameBack: document.getElementById('btn-game-back'),
+  btnGameHome: document.getElementById('btn-game-home'),
+  btnGameFullscreen: document.getElementById('btn-game-fullscreen'),
   btnGameSettings: document.getElementById('btn-game-settings'),
   hudRound: document.getElementById('hud-round'),
   gameStage: document.getElementById('game-stage'),
@@ -98,8 +117,12 @@ const dom = {
   btnToggleSound: document.getElementById('btn-toggle-sound'),
   soundStatusIcon: document.getElementById('sound-status-icon'),
   soundStatusText: document.getElementById('sound-status-text'),
+  btnSettingsFullscreen: document.getElementById('btn-settings-fullscreen'),
+  fullscreenStatusIcon: document.getElementById('fullscreen-status-icon'),
+  fullscreenStatusText: document.getElementById('fullscreen-status-text'),
   btnRestartMatch: document.getElementById('btn-restart-match'),
   btnCloseSettings: document.getElementById('btn-close-settings'),
+  btnSettingsHome: document.getElementById('btn-settings-home'),
 
   // Modal de Fim de Jogo
   modalEndgame: document.getElementById('modal-endgame'),
@@ -111,6 +134,7 @@ const dom = {
   endgameHighScore: document.getElementById('endgame-highscore'),
   btnPlayAgain: document.getElementById('btn-play-again'),
   btnBackMenu: document.getElementById('btn-back-menu'),
+  btnEndgameHome: document.getElementById('btn-endgame-home'),
 
   // Toast
   toast: document.getElementById('toast'),
@@ -207,12 +231,13 @@ function scheduleTimer(callback, delayMs) {
 }
 
 /**
- * Cancela todas as reproduções de sequência e animações pendentes na partida.
+ * Cancela todas as reproduções de sequência, áudios e animações pendentes na partida.
  */
 function cancelActivePlayback() {
   playbackSessionId += 1;
   activeTimers.forEach((timerId) => window.clearTimeout(timerId));
   activeTimers.clear();
+  audioEngine.stopAll();
 
   dom.gamePads.forEach((pad) => pad.classList.remove('is-active'));
   dom.gameBoard.classList.remove('is-error');
@@ -267,6 +292,90 @@ function syncSoundToggleUI() {
 }
 
 /**
+ * Verifica se o navegador atual suporta a Fullscreen API (incluindo prefixo WebKit).
+ *
+ * @returns {boolean}
+ */
+function isFullscreenSupported() {
+  const docEl = document.documentElement;
+  const hasMethod = Boolean(docEl.requestFullscreen || docEl.webkitRequestFullscreen);
+  const enabledFlag =
+    typeof document.fullscreenEnabled === 'boolean'
+      ? document.fullscreenEnabled
+      : Boolean(document.webkitFullscreenEnabled);
+  return hasMethod && enabledFlag;
+}
+
+/**
+ * Verifica se a aplicação está atualmente exibida em modo tela cheia.
+ *
+ * @returns {boolean}
+ */
+function isFullscreenActive() {
+  return Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+}
+
+/**
+ * Atualiza os botões e ícones de Tela Cheia na barra superior e nas Configurações.
+ */
+function syncFullscreenUI() {
+  const supported = isFullscreenSupported();
+  const active = isFullscreenActive();
+
+  // Em navegadores sem Fullscreen API (ex.: Safari iOS), oculta o atalho do topo
+  dom.btnGameFullscreen.hidden = !supported;
+
+  if (!supported) {
+    dom.fullscreenStatusIcon.innerHTML = FULLSCREEN_ICONS.enter;
+    dom.fullscreenStatusText.textContent = 'Tela Cheia (indisponível)';
+    dom.btnSettingsFullscreen.setAttribute('aria-pressed', 'false');
+    return;
+  }
+
+  const iconSvg = active ? FULLSCREEN_ICONS.exit : FULLSCREEN_ICONS.enter;
+  dom.btnGameFullscreen.innerHTML = iconSvg;
+  dom.btnGameFullscreen.setAttribute('aria-pressed', String(active));
+  dom.btnGameFullscreen.setAttribute('aria-label', active ? 'Sair da tela cheia' : 'Ativar tela cheia');
+  dom.btnGameFullscreen.title = active ? 'Sair da tela cheia' : 'Tela cheia';
+
+  dom.fullscreenStatusIcon.innerHTML = iconSvg;
+  dom.fullscreenStatusText.textContent = active ? 'Tela Cheia: Ativada' : 'Tela Cheia: Desativada';
+  dom.btnSettingsFullscreen.setAttribute('aria-pressed', String(active));
+}
+
+/**
+ * Alterna o modo Tela Cheia utilizando Fullscreen API com fallback WebKit.
+ */
+async function toggleFullscreen() {
+  audioEngine.unlock();
+  audioEngine.playUiClick();
+
+  if (!isFullscreenSupported()) {
+    showToast('Tela cheia não suportada neste navegador. Adicione à tela inicial para usar em tela cheia!');
+    return;
+  }
+
+  try {
+    if (!isFullscreenActive()) {
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) {
+        await docEl.requestFullscreen();
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      }
+    } else if (document.exitFullscreen) {
+      await document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  } catch {
+    showToast('Não foi possível alternar a tela cheia neste dispositivo.');
+  } finally {
+    syncFullscreenUI();
+  }
+}
+
+/**
  * Abre o modal de configurações da partida com o recorde atual e estado do áudio.
  */
 function openSettingsModal() {
@@ -274,6 +383,7 @@ function openSettingsModal() {
   audioEngine.playUiClick();
   dom.settingsHighScore.textContent = String(highScore);
   syncSoundToggleUI();
+  syncFullscreenUI();
   dom.modalSettings.hidden = false;
   dom.btnToggleSound.focus();
 }
@@ -334,6 +444,30 @@ function showScreen(screenName) {
   const usesBlurredMenuBg =
     screenName === 'mode' || screenName === 'local-config' || screenName === 'online-config';
   dom.menuBgBoard.hidden = !usesBlurredMenuBg;
+}
+
+/**
+ * Retorna imediatamente para a Tela Principal limpando timers, áudio,
+ * modais abertos e estado da partida, e reativando a animação idle.
+ */
+function returnToStartScreen() {
+  cancelActivePlayback();
+  audioEngine.stopAll();
+  dom.modalSettings.hidden = true;
+  dom.modalEndgame.hidden = true;
+
+  isNewRecordInMatch = false;
+  gameState = createGameState(localConfig);
+  renderGameUI();
+
+  if (dom.startBoard) {
+    dom.startBoard.classList.remove('idle-animation');
+    // Força reflow para reiniciar sincronia de anéis e botões da vitrine
+    void dom.startBoard.offsetWidth;
+    dom.startBoard.classList.add('idle-animation');
+  }
+
+  showScreen('start');
 }
 
 /**
@@ -771,6 +905,12 @@ function bindEvents() {
     showScreen('local-config');
   });
 
+  dom.btnGameHome.addEventListener('click', () => {
+    audioEngine.unlock();
+    returnToStartScreen();
+  });
+
+  dom.btnGameFullscreen.addEventListener('click', toggleFullscreen);
   dom.btnGameSettings.addEventListener('click', openSettingsModal);
 
   // --- Modal de Configurações ---
@@ -783,6 +923,8 @@ function bindEvents() {
     }
   });
 
+  dom.btnSettingsFullscreen.addEventListener('click', toggleFullscreen);
+
   dom.btnRestartMatch.addEventListener('click', () => {
     audioEngine.unlock();
     audioEngine.playUiClick();
@@ -792,6 +934,10 @@ function bindEvents() {
   dom.btnCloseSettings.addEventListener('click', () => {
     audioEngine.playUiClick();
     closeSettingsModal();
+  });
+
+  dom.btnSettingsHome.addEventListener('click', () => {
+    returnToStartScreen();
   });
 
   // Fecha o modal de configurações ao clicar no fundo escurecido
@@ -812,6 +958,14 @@ function bindEvents() {
     audioEngine.playUiClick();
     showScreen('mode');
   });
+
+  dom.btnEndgameHome.addEventListener('click', () => {
+    returnToStartScreen();
+  });
+
+  // Mantém ícones e textos sincronizados quando o usuário sai/entra em tela cheia pelo sistema
+  document.addEventListener('fullscreenchange', syncFullscreenUI);
+  document.addEventListener('webkitfullscreenchange', syncFullscreenUI);
 
   // --- Atalhos globais de teclado ---
   document.addEventListener('keydown', (event) => {
@@ -857,6 +1011,7 @@ function init() {
   syncSelectorGroup(dom.onlinePlayerButtons, 'onlinePlayers', onlineConfig.playerCount);
   syncSelectorGroup(dom.onlineDifficultyButtons, 'onlineDifficulty', onlineConfig.difficulty);
   syncSoundToggleUI();
+  syncFullscreenUI();
   bindEvents();
   showScreen('start');
 }

@@ -236,7 +236,8 @@ body {
    TELA 1: TABULEIRO WIDESCREEN PRINCIPAL E PROMPT DE ENTRADA
    ========================================================================== */
 .screen--start {
-  padding: clamp(12px, 2.2dvh, 24px) clamp(12px, 2vw, 28px) clamp(10px, 1.8dvh, 20px);
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+    max(10px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
 }
 
 .start-stage {
@@ -265,10 +266,11 @@ body {
   height: 76dvh;
 }
 
-/* Tela de Jogo: dimensionada para encaixar com os cards laterais sem espaço morto */
+/* Tela de Jogo: dimensionada dentro da célula central sem invadir barra superior nem cards */
 .genius-board--playable {
-  width: min(100%, 58vw, 108dvh);
-  height: min(76dvh, 72vw);
+  width: min(100%, 58vw, 102dvh);
+  height: min(92%, 72dvh, 70vw);
+  max-height: 100%;
 }
 
 /* Anel externo gigante por trás do tabuleiro: abraça as laterais e vaza no topo/base */
@@ -1069,31 +1071,50 @@ body {
 
 /* ==========================================================================
    TELA 5: TELA DE JOGO (IN-GAME WIDESCREEN + CARDS LATERAIS)
+   Usa fluxo vertical rígido (header dedicado + palco flex: 1) para evitar
+   qualquer sobreposição de elementos em desktop e dispositivos móveis.
    ========================================================================== */
 .screen--game {
-  padding: 0;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  padding: max(10px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  gap: clamp(6px, 1.2dvh, 14px);
 }
 
-/* Barra superior flutuante no desktop para não roubar altura nem gerar faixa morta no topo */
+/* Barra superior dedicada no fluxo normal (sem position fixed/absolute) */
 .game-topbar {
-  position: fixed;
-  top: clamp(14px, 2.4dvh, 24px);
-  left: clamp(16px, 2vw, 28px);
-  right: clamp(16px, 2vw, 28px);
+  position: static;
+  flex-shrink: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
   z-index: 20;
+}
+
+.topbar-group {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  pointer-events: none;
+  gap: 8px;
 }
 
-.game-topbar > * {
-  pointer-events: auto;
+.topbar-group--left {
+  justify-self: start;
+}
+
+.topbar-group--right {
+  justify-self: end;
 }
 
 .round-pill {
+  justify-self: center;
   min-height: 42px;
   padding: 6px 18px;
   border-radius: 999px;
@@ -1105,6 +1126,7 @@ body {
   gap: 8px;
   font-size: 0.95rem;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .round-pill strong {
@@ -1112,15 +1134,16 @@ body {
   font-size: 1.05rem;
 }
 
-/* Palco central: preenche 100vw x 100dvh distribuindo cards laterais e tabuleiro widescreen */
+/* Palco central: ocupa o restante da altura disponível sem invadir o header */
 .game-stage {
-  width: 100vw;
-  height: 100dvh;
-  padding: clamp(12px, 2vw, 28px);
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  padding: clamp(6px, 1.2dvh, 16px) clamp(4px, 1vw, 18px);
   display: grid;
   align-items: center;
   justify-items: center;
-  gap: clamp(12px, 2vw, 28px);
+  gap: clamp(12px, 2vw, 26px);
   grid-template-columns: minmax(150px, 16vw) minmax(0, 1fr) minmax(150px, 16vw);
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
@@ -1132,6 +1155,7 @@ body {
   grid-area: board;
   width: 100%;
   height: 100%;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1354,12 +1378,14 @@ body {
   position: fixed;
   inset: 0;
   z-index: 30;
-  padding: 18px;
+  padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right))
+    max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
   background: rgba(3, 5, 10, 0.72);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
 }
 
 .settings-list {
@@ -1393,8 +1419,8 @@ body {
 
 .settings-action-btn {
   width: 100%;
-  min-height: 52px;
-  padding: 12px 18px;
+  min-height: 50px;
+  padding: 10px 18px;
   border-radius: 16px;
   border: 1.5px solid var(--neon-blue);
   background: rgba(20, 184, 255, 0.14);
@@ -1408,6 +1434,11 @@ body {
   gap: 10px;
   cursor: pointer;
   touch-action: manipulation;
+}
+
+.settings-action-btn--green {
+  border-color: var(--neon-green);
+  background: rgba(34, 255, 34, 0.12);
 }
 
 .settings-action-btn__icon {
@@ -1468,9 +1499,13 @@ body {
 .dialog-btn {
   min-width: 0;
   width: 100%;
-  min-height: 52px;
-  padding: 12px 16px;
+  min-height: 50px;
+  padding: 11px 16px;
   font-size: 1rem;
+}
+
+.dialog-btn--full {
+  width: 100%;
 }
 
 .record-badge {
@@ -1550,171 +1585,22 @@ body {
 }
 
 /* ==========================================================================
-   RESPONSIVIDADE MOBILE (< 768px ATÉ 360px)
-   Tabuleiro ocupa ~92% da largura mantendo os 4 retângulos arredondados,
-   círculo central proporcional e cards dos jogadores em 2x2 acima/abaixo.
+   RESPONSIVIDADE MOBILE E TABLET
+   Separa ajustes gerais de telas menores, Mobile Vertical (portrait) em
+   4 faixas independentes e Mobile Horizontal (landscape) em 2 linhas rígidas.
    ========================================================================== */
-@media (max-width: 767px) {
-  :root {
-    --pad-r-outer: clamp(38px, 11vw, 62px);
-    --pad-r-inner: clamp(12px, 3vw, 18px);
-    --board-gap: clamp(10px, 2.8vw, 16px);
-  }
-
-  html,
-  body {
-    width: 100%;
-    height: auto;
-    min-height: 100dvh;
-    overflow-x: hidden;
+@media (max-width: 900px) {
+  .screen--modal {
+    height: 100dvh;
     overflow-y: auto;
-  }
-
-  .app-shell {
-    width: 100%;
-    height: auto;
-    min-height: 100dvh;
     overflow-x: hidden;
-    overflow-y: visible;
-  }
-
-  .screen {
-    width: 100%;
-    height: auto;
-    min-height: 100dvh;
-    overflow-x: hidden;
-    overflow-y: visible;
-    padding: 14px 12px 20px;
-  }
-
-  .start-stage {
-    height: auto;
-    gap: 20px;
-  }
-
-  .genius-board--showcase,
-  .genius-board--playable {
-    width: 92vw;
-    height: auto;
-    aspect-ratio: 4 / 3;
-  }
-
-  .genius-board--showcase .board-outer-ring,
-  .board-outer-ring {
-    width: 112vw;
-    height: auto;
-    aspect-ratio: 1 / 1;
-  }
-
-  .bg-board-glow {
-    width: 92vw;
-    height: auto;
-    aspect-ratio: 4 / 3;
-  }
-
-  .bg-ring {
-    width: 112vw;
-    height: auto;
-    aspect-ratio: 1 / 1;
-  }
-
-  .board-center,
-  .board-center--start,
-  .bg-center {
-    height: 54%;
-    width: auto;
-    aspect-ratio: 1 / 1;
-  }
-
-  .brand-title {
-    font-size: clamp(1.5rem, 8.5vw, 2.5rem);
-  }
-
-  .brand-subtitle {
-    font-size: clamp(0.5rem, 2.2vw, 0.72rem);
-  }
-
-  .hub-logo {
-    font-size: clamp(0.9rem, 4.4vw, 1.35rem);
-  }
-
-  .hub-status__prefix {
-    font-size: clamp(0.62rem, 2.8vw, 0.85rem);
-  }
-
-  .hub-status__main {
-    font-size: clamp(0.8rem, 4vw, 1.2rem);
-  }
-
-  .screen--game {
     justify-content: flex-start;
-    padding: 12px 10px 20px;
-    gap: 12px;
+    padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right))
+      max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
   }
 
-  .game-topbar {
-    position: static;
-    width: 100%;
-    pointer-events: auto;
-  }
-
-  .game-stage {
-    width: 100%;
-    height: auto;
-    flex: 1;
-    padding: 4px 0 8px;
-    gap: 10px;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    grid-template-areas:
-      'p1 p2'
-      'board board'
-      'p3 p4';
-  }
-
-  .game-stage[data-players='1'] {
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      'p1 p1'
-      'board board';
-  }
-
-  .game-stage[data-players='2'] {
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      'p1 p2'
-      'board board';
-  }
-
-  .game-stage[data-players='1'] #player-card-1,
-  .game-stage[data-players='2'] #player-card-1,
-  .game-stage[data-players='2'] #player-card-2 {
-    grid-row: auto;
-  }
-
-  .board-wrapper {
-    height: auto;
-    padding: 6px 0;
-  }
-
-  .player-card {
-    max-width: 220px;
-    padding: 8px 12px;
-    border-radius: 16px;
-    gap: 5px;
-  }
-
-  .player-card.is-current {
-    transform: scale(1.02);
-  }
-
-  .lives-current {
-    font-size: 1.25rem;
-  }
-
-  .life-block {
-    width: 24px;
-    height: 14px;
+  .screen--modal .neon-modal {
+    margin: auto 0;
   }
 
   .floating-back-btn {
@@ -1725,9 +1611,17 @@ body {
 
   .neon-modal {
     border-radius: 26px;
-    padding: 22px 16px;
+    padding: 20px 16px;
   }
 
+  .neon-modal--dialog {
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 520px) {
   .pill-grid--players {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1752,6 +1646,350 @@ body {
   .settings-shortcuts {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE VERTICAL (PORTRAIT): 4 áreas rígidas sem sobreposição
+   1) Barra superior  2) Cards J1/J2  3) Tabuleiro + anel contidos  4) J3/J4
+   -------------------------------------------------------------------------- */
+@media (orientation: portrait) and (max-width: 900px) {
+  :root {
+    --pad-r-outer: clamp(32px, 9.5vw, 58px);
+    --pad-r-inner: clamp(10px, 2.8vw, 18px);
+    --board-gap: clamp(10px, 2.6vw, 16px);
+  }
+
+  .genius-board--showcase {
+    width: 92vw;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .genius-board--showcase .board-outer-ring,
+  .bg-ring {
+    width: 112vw;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .bg-board-glow {
+    width: 92vw;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .board-center--start,
+  .bg-center {
+    height: 54%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .brand-title {
+    font-size: clamp(1.5rem, 8.5vw, 2.5rem);
+  }
+
+  .brand-subtitle {
+    font-size: clamp(0.5rem, 2.2vw, 0.72rem);
+  }
+
+  /* Tela de jogo ocupando 100dvh exatos sem scroll e sem invasão entre áreas */
+  .screen--game {
+    height: 100dvh;
+    overflow: hidden;
+    gap: 8px;
+    padding: max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+      max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  }
+
+  .game-topbar {
+    gap: 6px;
+  }
+
+  .game-topbar .icon-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 12px;
+  }
+
+  .round-pill {
+    min-height: 38px;
+    padding: 4px 14px;
+    font-size: 0.85rem;
+  }
+
+  .game-stage {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding: 0;
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'p1 p2'
+      'board board'
+      'p3 p4';
+    align-items: stretch;
+    justify-items: center;
+  }
+
+  .game-stage[data-players='1'] {
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'p1 p1'
+      'board board';
+  }
+
+  .game-stage[data-players='2'] {
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'p1 p2'
+      'board board';
+  }
+
+  .game-stage[data-players='1'] #player-card-1,
+  .game-stage[data-players='2'] #player-card-1,
+  .game-stage[data-players='2'] #player-card-2 {
+    grid-row: auto;
+  }
+
+  .player-card {
+    max-width: 100%;
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 14px;
+    gap: 3px;
+  }
+
+  .player-card.is-current {
+    transform: none;
+  }
+
+  .player-card__name {
+    font-size: 0.85rem;
+  }
+
+  .player-card__score {
+    font-size: 0.88rem;
+  }
+
+  .lives-current {
+    font-size: 1.15rem;
+  }
+
+  .life-block {
+    width: 22px;
+    height: 12px;
+  }
+
+  /* Área central fechada: tabuleiro e anel neon cabem 100% sem vazar atrás dos cards */
+  .board-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    container-type: size;
+  }
+
+  .genius-board--playable {
+    width: min(86cqw, 114cqh);
+    height: min(64.5cqw, 85.5cqh);
+    max-height: 100%;
+  }
+
+  .genius-board--playable .board-outer-ring {
+    width: min(96cqw, 96cqh);
+    height: min(96cqw, 96cqh);
+  }
+
+  .genius-board--playable .board-center {
+    height: 54%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .hub-logo {
+    font-size: clamp(0.85rem, 4.2vw, 1.35rem);
+  }
+
+  .hub-status__prefix {
+    font-size: clamp(0.6rem, 2.6vw, 0.85rem);
+  }
+
+  .hub-status__main {
+    font-size: clamp(0.78rem, 3.8vw, 1.2rem);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE HORIZONTAL (LANDSCAPE): 2 linhas rígidas sem sobreposição
+   Linha 1: Header compacto (~40px)
+   Linha 2: Cards P1/P3 à esquerda | Tabuleiro no centro | Cards P2/P4 à direita
+   -------------------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 550px) {
+  :root {
+    --pad-r-outer: clamp(24px, 6.5dvh, 46px);
+    --pad-r-inner: clamp(8px, 2dvh, 14px);
+    --board-gap: clamp(8px, 2dvh, 14px);
+  }
+
+  .screen--start {
+    padding: max(6px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  }
+
+  .start-stage {
+    gap: 8px;
+  }
+
+  .genius-board--showcase {
+    height: 70dvh;
+    width: auto;
+    aspect-ratio: 16 / 10;
+    max-width: 82vw;
+  }
+
+  .start-prompt-btn {
+    min-height: 36px;
+    padding: 4px 16px;
+    font-size: 0.9rem;
+  }
+
+  /* Tela de jogo em paisagem mobile: 2 linhas (header 40px + palco flex: 1) */
+  .screen--game {
+    height: 100dvh;
+    overflow: hidden;
+    gap: 4px;
+    padding: max(4px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  }
+
+  .game-topbar {
+    min-height: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .game-topbar .icon-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    border-radius: 10px;
+  }
+
+  .game-topbar .icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .round-pill {
+    min-height: 32px;
+    padding: 3px 12px;
+    font-size: 0.8rem;
+  }
+
+  .round-pill strong {
+    font-size: 0.9rem;
+  }
+
+  .game-stage {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+    gap: 10px;
+    grid-template-columns: minmax(110px, 1fr) auto minmax(110px, 1fr);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+      'p1 board p2'
+      'p3 board p4';
+    align-items: center;
+    justify-items: center;
+  }
+
+  .board-wrapper {
+    width: auto;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding: 2px 12px;
+  }
+
+  .genius-board--playable {
+    height: 84%;
+    max-height: 100%;
+    width: auto;
+    aspect-ratio: 4 / 3;
+    max-width: calc(100vw - 260px);
+  }
+
+  .genius-board--playable .board-outer-ring {
+    height: 116%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .genius-board--playable .board-center {
+    height: 56%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .hub-logo {
+    font-size: clamp(0.72rem, 3.6dvh, 1.1rem);
+  }
+
+  .mini-sq {
+    width: clamp(6px, 1.6dvh, 10px);
+    height: clamp(6px, 1.6dvh, 10px);
+  }
+
+  .hub-status__prefix {
+    font-size: clamp(0.55rem, 2.3dvh, 0.8rem);
+  }
+
+  .hub-status__main {
+    font-size: clamp(0.7rem, 3.4dvh, 1.05rem);
+  }
+
+  .player-card {
+    max-width: 148px;
+    padding: 5px 8px;
+    border-radius: 12px;
+    gap: 2px;
+  }
+
+  .player-card.is-current {
+    transform: scale(1.02);
+  }
+
+  .player-card__name {
+    font-size: 0.78rem;
+  }
+
+  .player-card__score {
+    font-size: 0.8rem;
+  }
+
+  .lives-current {
+    font-size: 1.05rem;
+  }
+
+  .life-block {
+    width: 20px;
+    height: 10px;
+    border-radius: 4px;
+  }
+
+  .eliminated-badge {
+    font-size: 0.58rem;
+    padding: 2px 6px;
   }
 }
 

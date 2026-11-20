@@ -35,6 +35,8 @@ export class AudioEngine {
     this.storageKey = storageKey;
     /** Instância única de AudioContext criada apenas após interação do usuário. */
     this.context = null;
+    /** Conjunto de osciladores/ganhos em reprodução para permitir interrupção imediata. */
+    this.activeNodes = new Set();
     /** Estado atual de silenciamento carregado de forma segura do localStorage. */
     this.muted = this._loadMutedPreference();
   }
@@ -180,6 +182,11 @@ export class AudioEngine {
       primaryOsc.frequency.exponentialRampToValueAtTime(Math.max(20, endFrequency), stopTime);
     }
     primaryOsc.connect(gainNode);
+    const primaryEntry = { osc: primaryOsc, gain: gainNode };
+    this.activeNodes.add(primaryEntry);
+    primaryOsc.onended = () => {
+      this.activeNodes.delete(primaryEntry);
+    };
     primaryOsc.start(now);
     primaryOsc.stop(stopTime);
 
@@ -195,9 +202,36 @@ export class AudioEngine {
       harmonicOsc.type = 'triangle';
       harmonicOsc.frequency.setValueAtTime(frequency, now);
       harmonicOsc.connect(harmonicGain);
+      const harmonicEntry = { osc: harmonicOsc, gain: harmonicGain };
+      this.activeNodes.add(harmonicEntry);
+      harmonicOsc.onended = () => {
+        this.activeNodes.delete(harmonicEntry);
+      };
       harmonicOsc.start(now);
       harmonicOsc.stop(stopTime);
     }
+  }
+
+  /**
+   * Interrompe imediatamente todos os osciladores atualmente ativos sem alterar
+   * a preferência de mudo persistida do usuário.
+   */
+  stopAll() {
+    this.activeNodes.forEach(({ osc, gain }) => {
+      try {
+        osc.onended = null;
+        osc.stop();
+      } catch {
+        // Ignora caso o oscilador já tenha encerrado naturalmente
+      }
+      try {
+        osc.disconnect();
+        gain.disconnect();
+      } catch {
+        // Ignora caso os nós já estejam desconectados
+      }
+    });
+    this.activeNodes.clear();
   }
 
   /**
