@@ -296,6 +296,16 @@
         </div>
 
         <div class="topbar-group topbar-group--right">
+          <button type="button" id="btn-game-rules" class="icon-btn" aria-label="Como jogar e regras"
+            title="Como jogar e regras">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9.5" />
+              <path d="M9.2 9.2a3 3 0 0 1 5.6 1c0 1.9-2.8 2.6-2.8 4.1" />
+              <circle cx="12" cy="17.5" r="0.8" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+
           <button type="button" id="btn-game-fullscreen" class="icon-btn" aria-label="Ativar tela cheia"
             aria-pressed="false" title="Tela cheia">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -448,6 +458,19 @@
           <span id="fullscreen-status-text">Tela Cheia: Desativada</span>
         </button>
 
+        <!-- Botão opcional para consultar novamente as regras durante a partida -->
+        <button type="button" id="btn-settings-rules" class="settings-action-btn settings-action-btn--yellow">
+          <span class="settings-action-btn__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </span>
+          <span>Ver Regras</span>
+        </button>
+
         <div class="settings-shortcuts">
           <span>Atalhos do teclado:</span>
           <div class="shortcut-badges">
@@ -510,6 +533,93 @@
       <button type="button" id="btn-endgame-home" class="pill-btn pill-btn--blue dialog-btn dialog-btn--full">
         Voltar para a Tela Inicial
       </button>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL DE COMO JOGAR E REGRAS
+       Exibido automaticamente ao clicar em "Continuar" na configuração local
+       e acessível novamente pelo botão "Ver Regras" nas Configurações.
+       ====================================================================== -->
+  <div id="modal-rules" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rules-modal-title" hidden>
+    <div class="neon-modal neon-modal--dialog neon-modal--rules">
+      <h2 id="rules-modal-title" class="modal-heading">Como Jogar e Regras</h2>
+
+      <!-- Área com rolagem interna para manter o botão de início sempre acessível no mobile -->
+      <div class="rules-content">
+        <section class="rule-section rule-section--blue" aria-labelledby="rule-title-how">
+          <div class="rule-section__header">
+            <span class="rule-section__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </span>
+            <h3 id="rule-title-how" class="rule-section__title">1. Como Jogar</h3>
+          </div>
+          <ul class="rule-section__list">
+            <li>Observe a sequência de cores e sons exibida pelo Genius.</li>
+            <li>
+              Quando aparecer <strong>&ldquo;Vez do Jogador X&rdquo;</strong> no centro, repita as cores na
+              <strong>ordem exata</strong> (usando clique, toque na tela ou teclas <kbd class="kbd kbd--blue">Q</kbd>,
+              <kbd class="kbd kbd--red">W</kbd>, <kbd class="kbd kbd--green">A</kbd>, <kbd class="kbd kbd--yellow">S</kbd>).
+            </li>
+          </ul>
+        </section>
+
+        <section class="rule-section rule-section--yellow" aria-labelledby="rule-title-turns">
+          <div class="rule-section__header">
+            <span class="rule-section__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
+            </span>
+            <h3 id="rule-title-turns" class="rule-section__title">2. Regras e Turnos</h3>
+          </div>
+          <ul class="rule-section__list">
+            <li>
+              A cada sequência concluída com sucesso, <strong>uma nova cor</strong> é adicionada e a vez passa para o
+              próximo jogador ativo.
+            </li>
+            <li>
+              A velocidade das cores varia conforme a dificuldade escolhida (<strong>Fácil</strong>,
+              <strong>Médio</strong> ou <strong>Difícil</strong>).
+            </li>
+          </ul>
+        </section>
+
+        <section class="rule-section rule-section--red" aria-labelledby="rule-title-lives">
+          <div class="rule-section__header">
+            <span class="rule-section__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </span>
+            <h3 id="rule-title-lives" class="rule-section__title">3. Sistema de Vidas</h3>
+          </div>
+          <ul class="rule-section__list">
+            <li>Cada jogador começa com <strong>3 vidas (3/3)</strong>.</li>
+            <li>Errar qualquer cor da sequência faz o jogador perder <strong>1 vida</strong>.</li>
+            <li>
+              Ao perder as 3 vidas (<strong>0/3</strong>), é <strong>Game Over</strong> para aquele jogador (ele é
+              eliminado).
+            </li>
+            <li>No modo multiplayer, vence o último jogador restante; no modo solo, o objetivo é bater o seu recorde!</li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="rules-footer">
+        <button type="button" id="btn-rules-confirm" class="rules-confirm-btn dialog-btn dialog-btn--full">
+          Entendi, Começar!
+        </button>
+      </div>
     </div>
   </div>
 

@@ -96,6 +96,7 @@ const dom = {
   // Tela de jogo
   btnGameBack: document.getElementById('btn-game-back'),
   btnGameHome: document.getElementById('btn-game-home'),
+  btnGameRules: document.getElementById('btn-game-rules'),
   btnGameFullscreen: document.getElementById('btn-game-fullscreen'),
   btnGameSettings: document.getElementById('btn-game-settings'),
   hudRound: document.getElementById('hud-round'),
@@ -120,9 +121,14 @@ const dom = {
   btnSettingsFullscreen: document.getElementById('btn-settings-fullscreen'),
   fullscreenStatusIcon: document.getElementById('fullscreen-status-icon'),
   fullscreenStatusText: document.getElementById('fullscreen-status-text'),
+  btnSettingsRules: document.getElementById('btn-settings-rules'),
   btnRestartMatch: document.getElementById('btn-restart-match'),
   btnCloseSettings: document.getElementById('btn-close-settings'),
   btnSettingsHome: document.getElementById('btn-settings-home'),
+
+  // Modal de Como Jogar e Regras
+  modalRules: document.getElementById('modal-rules'),
+  btnRulesConfirm: document.getElementById('btn-rules-confirm'),
 
   // Modal de Fim de Jogo
   modalEndgame: document.getElementById('modal-endgame'),
@@ -167,6 +173,13 @@ let highScore = loadHighScore();
 
 /** Indica se o jogador superou o recorde durante a partida em andamento. */
 let isNewRecordInMatch = false;
+
+/**
+ * Define o contexto de abertura do modal de regras:
+ * - 'start': aberto automaticamente após "Continuar", iniciando a partida ao confirmar.
+ * - 'review': aberto pelo menu de Configurações, apenas fechando ao confirmar.
+ */
+let rulesModalMode = 'start';
 
 /**
  * Identificador incremental da sessão de reprodução da sequência.
@@ -273,12 +286,12 @@ function showToast(message, durationMs = 3400) {
 }
 
 /**
- * Verifica se há algum modal auxiliar (Configurações ou Fim de Jogo) aberto.
+ * Verifica se há algum modal auxiliar (Configurações, Regras ou Fim de Jogo) aberto.
  *
  * @returns {boolean}
  */
 function isAnyDialogOpen() {
-  return !dom.modalSettings.hidden || !dom.modalEndgame.hidden;
+  return !dom.modalSettings.hidden || !dom.modalEndgame.hidden || !dom.modalRules.hidden;
 }
 
 /**
@@ -396,6 +409,48 @@ function closeSettingsModal() {
 }
 
 /**
+ * Abre o modal de "Como Jogar e Regras".
+ *
+ * @param {'start'|'review'} [mode='start'] - 'start' inicia a partida ao confirmar;
+ *   'review' apenas fecha o modal mantendo a partida atual.
+ */
+function openRulesModal(mode = 'start') {
+  rulesModalMode = mode;
+  dom.btnRulesConfirm.textContent = mode === 'start' ? 'Entendi, Começar!' : 'Voltar ao Jogo';
+  dom.modalRules.hidden = false;
+
+  const rulesDialog = dom.modalRules.querySelector('.neon-modal--rules');
+  const rulesScrollArea = dom.modalRules.querySelector('.rules-content');
+  const resetScrollTop = () => {
+    if (rulesDialog) {
+      rulesDialog.scrollTop = 0;
+    }
+    if (rulesScrollArea) {
+      rulesScrollArea.scrollTop = 0;
+    }
+  };
+
+  // Garante início no topo evitando corte do primeiro tópico após o modal abrir
+  resetScrollTop();
+  window.requestAnimationFrame(resetScrollTop);
+  dom.btnRulesConfirm.focus({ preventScroll: true });
+}
+
+/**
+ * Confirma o pop-up de regras, desbloqueia a Web Audio API e inicia a
+ * primeira rodada caso o modal tenha sido aberto na entrada do jogo.
+ */
+function confirmRulesModal() {
+  audioEngine.unlock();
+  audioEngine.playUiClick();
+  dom.modalRules.hidden = true;
+
+  if (rulesModalMode === 'start') {
+    startNewGame();
+  }
+}
+
+/**
  * Abre o modal de encerramento da partida (Game Over ou Vitória multiplayer).
  */
 function openEndgameModal() {
@@ -432,6 +487,7 @@ function showScreen(screenName) {
     cancelActivePlayback();
     dom.modalSettings.hidden = true;
     dom.modalEndgame.hidden = true;
+    dom.modalRules.hidden = true;
   }
 
   currentScreen = screenName;
@@ -455,6 +511,7 @@ function returnToStartScreen() {
   audioEngine.stopAll();
   dom.modalSettings.hidden = true;
   dom.modalEndgame.hidden = true;
+  dom.modalRules.hidden = true;
 
   isNewRecordInMatch = false;
   gameState = createGameState(localConfig);
@@ -494,19 +551,24 @@ function syncSelectorGroup(buttons, dataAttribute, activeValue) {
  * com base no objeto `gameState` atual.
  */
 function renderGameUI() {
-  dom.hudRound.textContent = String(gameState.round);
+  dom.hudRound.textContent = String(Math.max(1, gameState.round));
   dom.gameStage.dataset.players = String(gameState.playerCount);
 
   const currentPlayer = getCurrentPlayer(gameState);
+  const isIdle = gameState.phase === GAME_PHASES.IDLE;
   const isShowing = gameState.phase === GAME_PHASES.SHOWING_SEQUENCE;
   const isEnded =
     gameState.phase === GAME_PHASES.GAME_OVER || gameState.phase === GAME_PHASES.VICTORY;
 
-  // Bloqueia visualmente o tabuleiro enquanto o sistema demonstra a sequência ou após o fim
-  dom.gameBoard.classList.toggle('is-locked', isShowing || isEnded);
+  // Bloqueia visualmente o tabuleiro antes de confirmar regras, durante exibição ou após o fim
+  dom.gameBoard.classList.toggle('is-locked', isIdle || isShowing || isEnded);
 
   // Atualiza texto dinâmico no círculo central do tabuleiro
-  if (isShowing) {
+  if (isIdle) {
+    dom.hubStatusPrefix.hidden = false;
+    dom.hubStatusPrefix.textContent = 'Pronto';
+    dom.hubStatusMain.textContent = currentPlayer ? currentPlayer.name : 'Genius';
+  } else if (isShowing) {
     dom.hubStatusPrefix.hidden = true;
     dom.hubStatusPrefix.textContent = '';
     dom.hubStatusMain.textContent = 'Observe...';
@@ -636,12 +698,31 @@ function runSequencePlayback() {
 }
 
 /**
+ * Prepara a tela de jogo com os cards configurados sem iniciar a sequência,
+ * exibindo primeiro o modal de "Como Jogar e Regras" para confirmação.
+ */
+function enterGameWithRules() {
+  cancelActivePlayback();
+  dom.modalSettings.hidden = true;
+  dom.modalEndgame.hidden = true;
+  dom.modalRules.hidden = true;
+
+  isNewRecordInMatch = false;
+  gameState = createGameState(localConfig);
+
+  showScreen('game');
+  renderGameUI();
+  openRulesModal('start');
+}
+
+/**
  * Inicializa uma nova partida local usando as configurações escolhidas pelo usuário.
  */
 function startNewGame() {
   cancelActivePlayback();
   dom.modalSettings.hidden = true;
   dom.modalEndgame.hidden = true;
+  dom.modalRules.hidden = true;
 
   isNewRecordInMatch = false;
   gameState = startMatch(createGameState(localConfig));
@@ -847,7 +928,7 @@ function bindEvents() {
   dom.btnLocalStart.addEventListener('click', () => {
     audioEngine.unlock();
     audioEngine.playUiClick();
-    startNewGame();
+    enterGameWithRules();
   });
 
   // --- Tela 4: Configuração Online (interface interativa sem backend) ---
@@ -910,6 +991,14 @@ function bindEvents() {
     returnToStartScreen();
   });
 
+  dom.btnGameRules.addEventListener('click', () => {
+    audioEngine.unlock();
+    audioEngine.playUiClick();
+    // Se ainda não iniciou (IDLE), mantém o botão inicial; se em andamento, exibe "Voltar ao Jogo"
+    const mode = gameState.phase === GAME_PHASES.IDLE ? 'start' : 'review';
+    openRulesModal(mode);
+  });
+
   dom.btnGameFullscreen.addEventListener('click', toggleFullscreen);
   dom.btnGameSettings.addEventListener('click', openSettingsModal);
 
@@ -924,6 +1013,12 @@ function bindEvents() {
   });
 
   dom.btnSettingsFullscreen.addEventListener('click', toggleFullscreen);
+
+  dom.btnSettingsRules.addEventListener('click', () => {
+    audioEngine.playUiClick();
+    closeSettingsModal();
+    openRulesModal('review');
+  });
 
   dom.btnRestartMatch.addEventListener('click', () => {
     audioEngine.unlock();
@@ -963,6 +1058,16 @@ function bindEvents() {
     returnToStartScreen();
   });
 
+  // --- Modal de Regras ---
+  dom.btnRulesConfirm.addEventListener('click', confirmRulesModal);
+
+  // Clicar fora da caixa do modal fecha o pop-up (inicia se for a 1ª abertura; retoma se já em jogo)
+  dom.modalRules.addEventListener('click', (event) => {
+    if (event.target === dom.modalRules) {
+      confirmRulesModal();
+    }
+  });
+
   // Mantém ícones e textos sincronizados quando o usuário sai/entra em tela cheia pelo sistema
   document.addEventListener('fullscreenchange', syncFullscreenUI);
   document.addEventListener('webkitfullscreenchange', syncFullscreenUI);
@@ -979,11 +1084,18 @@ function bindEvents() {
       return;
     }
 
-    // Fecha modal de configurações com Escape
-    if (event.key === 'Escape' && !dom.modalSettings.hidden) {
-      event.preventDefault();
-      closeSettingsModal();
-      return;
+    // Fecha modal de configurações ou regras com Escape
+    if (event.key === 'Escape') {
+      if (!dom.modalSettings.hidden) {
+        event.preventDefault();
+        closeSettingsModal();
+        return;
+      }
+      if (!dom.modalRules.hidden) {
+        event.preventDefault();
+        confirmRulesModal();
+        return;
+      }
     }
 
     // Durante a partida, Q/W/A/S acionam Azul/Vermelho/Verde/Amarelo (ignorando repetição contínua)

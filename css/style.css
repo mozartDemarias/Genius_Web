@@ -1441,6 +1441,11 @@ body {
   background: rgba(34, 255, 34, 0.12);
 }
 
+.settings-action-btn--yellow {
+  border-color: var(--neon-yellow);
+  background: rgba(255, 230, 0, 0.12);
+}
+
 .settings-action-btn__icon {
   width: 22px;
   height: 22px;
@@ -1506,6 +1511,156 @@ body {
 
 .dialog-btn--full {
   width: 100%;
+}
+
+/* ==========================================================================
+   MODAL DE COMO JOGAR E REGRAS
+   ========================================================================== */
+.neon-modal--rules {
+  width: min(100%, 560px);
+  max-height: 85dvh;
+  overflow: visible;
+  gap: 14px;
+}
+
+.rules-content {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 6px 4px 6px 0;
+}
+
+.rules-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.rules-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.rule-section {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(16, 21, 34, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-left-width: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rule-section--blue {
+  border-left-color: var(--neon-blue);
+}
+
+.rule-section--yellow {
+  border-left-color: var(--neon-yellow);
+}
+
+.rule-section--red {
+  border-left-color: var(--neon-red);
+}
+
+.rule-section__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rule-section__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rule-section--blue .rule-section__icon {
+  color: var(--neon-blue-bright);
+}
+
+.rule-section--yellow .rule-section__icon {
+  color: var(--neon-yellow-bright);
+}
+
+.rule-section--red .rule-section__icon {
+  color: var(--neon-red-bright);
+}
+
+.rule-section__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.rule-section__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.rule-section__list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.9rem;
+  line-height: 1.42;
+  color: var(--text-secondary);
+}
+
+.rule-section__list strong {
+  color: var(--text-primary);
+}
+
+.rule-section__list .kbd {
+  min-width: 24px;
+  height: 22px;
+  padding: 0 5px;
+  font-size: 0.75rem;
+  vertical-align: middle;
+}
+
+.rules-footer {
+  width: 100%;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+/* Botão sólido e limpo de confirmação das regras (sem brilho neon excessivo) */
+.rules-confirm-btn {
+  min-width: 48px;
+  min-height: 50px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #16a34a;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.16s ease, transform 0.12s ease;
+}
+
+.rules-confirm-btn:hover {
+  background: #15803d;
+}
+
+.rules-confirm-btn:active {
+  background: #166534;
+  transform: scale(0.99);
 }
 
 .record-badge {
@@ -1619,6 +1774,11 @@ body {
     overflow-y: auto;
     gap: 14px;
   }
+
+  .neon-modal--rules {
+    max-height: 85dvh;
+    overflow: visible;
+  }
 }
 
 @media (max-width: 520px) {
@@ -1699,26 +1859,36 @@ body {
     height: 100dvh;
     overflow: hidden;
     gap: 8px;
-    padding: max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
-      max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
+      max(10px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
   }
 
   .game-topbar {
-    gap: 6px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 4px;
+  }
+
+  .topbar-group {
+    gap: 4px;
   }
 
   .game-topbar .icon-btn {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
     border-radius: 12px;
   }
 
   .round-pill {
-    min-height: 38px;
-    padding: 4px 14px;
-    font-size: 0.85rem;
+    min-height: 36px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    gap: 4px;
+  }
+
+  .round-pill strong {
+    font-size: 0.88rem;
   }
 
   .game-stage {
@@ -1990,6 +2160,21 @@ body {
   .eliminated-badge {
     font-size: 0.58rem;
     padding: 2px 6px;
+  }
+
+  .neon-modal--rules {
+    max-height: 85dvh;
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .rule-section {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .rule-section__list {
+    font-size: 0.84rem;
   }
 }
 
