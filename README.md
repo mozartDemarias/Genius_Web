@@ -1,10 +1,36 @@
-# Genius_Web
+<h1 align="center">
+  🔴 🟢 🔵 🟡<br>
+  Genius_Web
+</h1>
 
-Aplicação web responsiva do jogo **Genius (Simon Says)** em **HTML5, CSS3 puro e JavaScript Vanilla (ES6+)**, com modo **Multiplayer Local (1 a 4 jogadores)** e **Multiplayer Online em tempo real** via Firebase Realtime Database.
+<p align="center">
+  <img src="https://img.shields.io/static/v1?label=HTML&message=5&color=E34F26&style=for-the-badge&logo=html5&logoColor=white"/>
+  <img src="https://img.shields.io/static/v1?label=CSS&message=3&color=1572B6&style=for-the-badge&logo=css3&logoColor=white"/>
+  <img src="https://img.shields.io/static/v1?label=JavaScript&message=ES6%2B&color=F7DF1E&style=for-the-badge&logo=javascript&logoColor=black"/>
+  <img src="https://img.shields.io/static/v1?label=Firebase&message=Realtime%20Database&color=FFCA28&style=for-the-badge&logo=firebase&logoColor=black"/>
+<a href="LICENSE">
+  <img src="https://img.shields.io/static/v1?label=License&message=GPL-3.0&color=blue&style=for-the-badge&logo=gnu&logoColor=white"/>
+</a>
+</p>
 
----
+> **Status do Projeto:** :heavy_check_mark: concluído
 
-## Como Rodar Localmente
+## Contexto :
+
+<p align="justify">
+
+O <strong>Genius_Web</strong> é um projeto desenvolvido para a disciplina de <strong>Design de Interface e Usabilidade</strong>, do 3º período do curso de Ciência da Computação da Universidade Católica de Pernambuco (UNICAP), durante o semestre 2026.2.
+
+</p>
+
+<p align="justify">
+   
+O projeto consiste na aplicação web responsiva do jogo <strong>Genius (Simon Says)</strong> em <strong>HTML5, CSS3 puro e JavaScript Vanilla (ES6+)</strong>, com modo <strong>Multiplayer Local (1 a 4 jogadores)</strong> e <strong>Multiplayer Online em tempo real</strong> via Firebase Realtime Database.
+
+</p>
+
+
+## Como Rodar Localmente :
 
 1. **Clonar e configurar as variáveis de ambiente (`.env`):**
    - Copie o arquivo de exemplo caso ainda não tenha o `.env`:
@@ -72,3 +98,10 @@ No Console do Firebase em **Realtime Database → Regras**, utilize regras adequ
   }
 }
 ```
+---
+## Desenvolvedores : 
+Time responsável pelo desenvolvimento do projeto.
+
+| [<img src="https://github.com/Sofiafs.png" width="115"><br><sub>Sofia Farias</sub>](https://github.com/Sofiafs) | [<img src="https://github.com/mozartDemarias.png" width="115"><br><sub>Mozart de Marias</sub>](https://github.com/mozartDemarias) |
+| :---: | :---: |
+---
