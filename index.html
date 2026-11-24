@@ -162,16 +162,16 @@
           <div class="pill-grid pill-grid--difficulty" role="group" aria-label="Dificuldade local">
             <button type="button" class="pill-btn pill-btn--blue" data-local-difficulty="easy"
               aria-pressed="false">Fácil</button>
-            <button type="button" class="pill-btn pill-btn--red is-selected" data-local-difficulty="medium"
+            <button type="button" class="pill-btn pill-btn--yellow is-selected" data-local-difficulty="medium"
               aria-pressed="true">Médio</button>
-            <button type="button" class="pill-btn pill-btn--yellow" data-local-difficulty="hard"
+            <button type="button" class="pill-btn pill-btn--red" data-local-difficulty="hard"
               aria-pressed="false">Difícil</button>
           </div>
         </div>
 
-        <!-- Botão verde de confirmação que inicia a partida local -->
+        <!-- Botão principal sóbrio de confirmação que inicia a partida local -->
         <div class="config-cta-wrap">
-          <button type="button" id="btn-local-start" class="cta-green-btn">
+          <button type="button" id="btn-local-start" class="cta-primary-btn">
             Continuar
           </button>
         </div>
@@ -229,9 +229,9 @@
             <div class="pill-grid pill-grid--difficulty" role="group" aria-label="Dificuldade online">
               <button type="button" class="pill-btn pill-btn--blue" data-online-difficulty="easy"
                 aria-pressed="false">Fácil</button>
-              <button type="button" class="pill-btn pill-btn--red is-selected" data-online-difficulty="medium"
+              <button type="button" class="pill-btn pill-btn--yellow is-selected" data-online-difficulty="medium"
                 aria-pressed="true">Médio</button>
-              <button type="button" class="pill-btn pill-btn--yellow" data-online-difficulty="hard"
+              <button type="button" class="pill-btn pill-btn--red" data-online-difficulty="hard"
                 aria-pressed="false">Difícil</button>
             </div>
           </div>
@@ -254,7 +254,7 @@
             </div>
 
             <div class="online-create-wrap">
-              <button type="button" id="btn-online-create" class="online-create-btn">
+              <button type="button" id="btn-online-create" class="cta-primary-btn online-create-btn">
                 Criar nova sala
               </button>
             </div>
@@ -290,21 +290,21 @@
           </button>
         </div>
 
-        <div class="round-pill" aria-live="polite">
-          <span>Rodada</span>
-          <strong id="hud-round">1</strong>
-        </div>
-
         <div class="topbar-group topbar-group--right">
-          <button type="button" id="btn-game-rules" class="icon-btn" aria-label="Como jogar e regras"
-            title="Como jogar e regras">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="9.5" />
-              <path d="M9.2 9.2a3 3 0 0 1 5.6 1c0 1.9-2.8 2.6-2.8 4.1" />
-              <circle cx="12" cy="17.5" r="0.8" fill="currentColor" stroke="none" />
-            </svg>
-          </button>
+          <div class="rules-anchor">
+            <button type="button" id="btn-game-rules" class="icon-btn" aria-label="Como jogar e regras"
+              title="Como jogar e regras">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9.5" />
+                <path d="M9.2 9.2a3 3 0 0 1 5.6 1c0 1.9-2.8 2.6-2.8 4.1" />
+                <circle cx="12" cy="17.5" r="0.8" fill="currentColor" stroke="none" />
+              </svg>
+            </button>
+            <button type="button" id="rules-tooltip" class="rules-tooltip" aria-label="Abrir Como jogar e regras" hidden>
+              Como jogar e regras
+            </button>
+          </div>
 
           <button type="button" id="btn-game-fullscreen" class="icon-btn" aria-label="Ativar tela cheia"
             aria-pressed="false" title="Tela cheia">
@@ -335,7 +335,15 @@
         <article id="player-card-1" class="player-card player-card--blue" data-player-id="1">
           <h3 class="player-card__name">Jogador 1</h3>
           <p class="player-card__score" aria-label="Vidas restantes">
-            <span class="lives-current">3</span><span class="lives-total">/3</span>
+            <span class="player-card__lives-label">
+              <svg class="lives-heart-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              Vidas:
+            </span>
+            <span class="player-card__lives-value">
+              <span class="lives-current">3</span><span class="lives-total">/3</span>
+            </span>
           </p>
           <div class="player-card__blocks" aria-hidden="true">
             <span class="life-block"></span>
@@ -349,7 +357,15 @@
         <article id="player-card-2" class="player-card player-card--red" data-player-id="2">
           <h3 class="player-card__name">Jogador 2</h3>
           <p class="player-card__score" aria-label="Vidas restantes">
-            <span class="lives-current">3</span><span class="lives-total">/3</span>
+            <span class="player-card__lives-label">
+              <svg class="lives-heart-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              Vidas:
+            </span>
+            <span class="player-card__lives-value">
+              <span class="lives-current">3</span><span class="lives-total">/3</span>
+            </span>
           </p>
           <div class="player-card__blocks" aria-hidden="true">
             <span class="life-block"></span>
@@ -376,18 +392,25 @@
                 aria-keyshortcuts="S"></button>
             </div>
 
-            <!-- Círculo central informativo: logo, 4 quadradinhos, divisor e turno atual -->
+            <!-- Círculo central informativo: logo, 4 quadradinhos, rodada, divisor e turno atual -->
             <div class="board-center board-center--game">
               <div class="board-center-ring" aria-hidden="true"></div>
               <div class="board-center-content board-center-content--game">
-                <span class="hub-logo">GENIUS</span>
+                <div class="hub-brand">
+                  <span class="hub-logo">GENIUS</span>
 
-                <!-- 4 quadradinhos coloridos abaixo do logo conforme tela_in_game.png -->
-                <div class="hub-mini-colors" aria-hidden="true">
-                  <span class="mini-sq mini-sq--blue"></span>
-                  <span class="mini-sq mini-sq--red"></span>
-                  <span class="mini-sq mini-sq--green"></span>
-                  <span class="mini-sq mini-sq--yellow"></span>
+                  <!-- 4 quadradinhos coloridos abaixo do logo conforme tela_in_game.png -->
+                  <div class="hub-mini-colors" aria-hidden="true">
+                    <span class="mini-sq mini-sq--blue"></span>
+                    <span class="mini-sq mini-sq--red"></span>
+                    <span class="mini-sq mini-sq--green"></span>
+                    <span class="mini-sq mini-sq--yellow"></span>
+                  </div>
+                </div>
+
+                <div class="hub-round" aria-live="polite">
+                  <span class="hub-round__label">Rodada</span>
+                  <strong id="hud-round" class="hub-round__value">1</strong>
                 </div>
 
                 <div class="hub-divider" aria-hidden="true"></div>
@@ -405,7 +428,15 @@
         <article id="player-card-3" class="player-card player-card--green" data-player-id="3" hidden>
           <h3 class="player-card__name">Jogador 3</h3>
           <p class="player-card__score" aria-label="Vidas restantes">
-            <span class="lives-current">3</span><span class="lives-total">/3</span>
+            <span class="player-card__lives-label">
+              <svg class="lives-heart-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              Vidas:
+            </span>
+            <span class="player-card__lives-value">
+              <span class="lives-current">3</span><span class="lives-total">/3</span>
+            </span>
           </p>
           <div class="player-card__blocks" aria-hidden="true">
             <span class="life-block"></span>
@@ -419,7 +450,15 @@
         <article id="player-card-4" class="player-card player-card--yellow" data-player-id="4" hidden>
           <h3 class="player-card__name">Jogador 4</h3>
           <p class="player-card__score" aria-label="Vidas restantes">
-            <span class="lives-current">3</span><span class="lives-total">/3</span>
+            <span class="player-card__lives-label">
+              <svg class="lives-heart-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              Vidas:
+            </span>
+            <span class="player-card__lives-value">
+              <span class="lives-current">3</span><span class="lives-total">/3</span>
+            </span>
           </p>
           <div class="player-card__blocks" aria-hidden="true">
             <span class="life-block"></span>
@@ -538,8 +577,8 @@
 
   <!-- ======================================================================
        MODAL DE COMO JOGAR E REGRAS
-       Exibido automaticamente ao clicar em "Continuar" na configuração local
-       e acessível novamente pelo botão "Ver Regras" nas Configurações.
+       Acessível pelo botão "?" da barra superior, pela notificação ancorada
+       ou pelo botão "Ver Regras" nas Configurações.
        ====================================================================== -->
   <div id="modal-rules" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rules-modal-title" hidden>
     <div class="neon-modal neon-modal--dialog neon-modal--rules">
@@ -617,7 +656,7 @@
 
       <div class="rules-footer">
         <button type="button" id="btn-rules-confirm" class="rules-confirm-btn dialog-btn dialog-btn--full">
-          Entendi, Começar!
+          Voltar ao Jogo
         </button>
       </div>
     </div>

@@ -112,6 +112,7 @@ const dom = {
   btnGameBack: document.getElementById('btn-game-back'),
   btnGameHome: document.getElementById('btn-game-home'),
   btnGameRules: document.getElementById('btn-game-rules'),
+  rulesTooltip: document.getElementById('rules-tooltip'),
   btnGameFullscreen: document.getElementById('btn-game-fullscreen'),
   btnGameSettings: document.getElementById('btn-game-settings'),
   hudRound: document.getElementById('hud-round'),
@@ -229,19 +230,16 @@ let highScore = loadHighScore();
 let isNewRecordInMatch = false;
 
 /**
- * Define o contexto de abertura do modal de regras:
- * - 'start': aberto automaticamente após "Continuar", iniciando a partida ao confirmar.
- * - 'review': aberto pelo menu de Configurações, apenas fechando ao confirmar.
- */
-let rulesModalMode = 'start';
-
-/**
  * Identificador incremental da sessão de reprodução da sequência.
  * Sempre que a partida é reiniciada ou abandonada, incrementamos este contador
  * e limpamos os timers ativos para evitar condições de corrida.
  */
 let playbackSessionId = 0;
 const activeTimers = new Set();
+
+/** Controle de temporização da notificação ancorada no botão "?" de regras. */
+let rulesTooltipHideTimer = null;
+let rulesTooltipHiddenTimer = null;
 
 /** Controle de temporização do toast de notificações. */
 let toastHideTimer = null;
@@ -337,6 +335,63 @@ function showToast(message, durationMs = 3400) {
       dom.toast.hidden = true;
     }, 240);
   }, durationMs);
+}
+
+/**
+ * Exibe a notificação ancorada abaixo do botão "?" por `durationMs` ms
+ * ao entrar na tela de partida (Local ou Online).
+ *
+ * @param {number} [durationMs=3000] - Tempo visível em milissegundos.
+ */
+function showRulesTooltip(durationMs = 3000) {
+  if (!dom.rulesTooltip) {
+    return;
+  }
+
+  window.clearTimeout(rulesTooltipHideTimer);
+  window.clearTimeout(rulesTooltipHiddenTimer);
+  rulesTooltipHideTimer = null;
+  rulesTooltipHiddenTimer = null;
+
+  dom.rulesTooltip.classList.remove('is-visible');
+  dom.rulesTooltip.hidden = false;
+
+  // Força reflow para garantir a animação suave de descida
+  void dom.rulesTooltip.offsetWidth;
+  dom.rulesTooltip.classList.add('is-visible');
+
+  rulesTooltipHideTimer = window.setTimeout(() => {
+    rulesTooltipHideTimer = null;
+    hideRulesTooltip(false);
+  }, durationMs);
+}
+
+/**
+ * Esconde a notificação de regras e cancela quaisquer timers pendentes.
+ *
+ * @param {boolean} [immediate=false] - Se true, oculta instantaneamente sem aguardar transição.
+ */
+function hideRulesTooltip(immediate = false) {
+  window.clearTimeout(rulesTooltipHideTimer);
+  window.clearTimeout(rulesTooltipHiddenTimer);
+  rulesTooltipHideTimer = null;
+  rulesTooltipHiddenTimer = null;
+
+  if (!dom.rulesTooltip) {
+    return;
+  }
+
+  dom.rulesTooltip.classList.remove('is-visible');
+
+  if (immediate || dom.rulesTooltip.hidden) {
+    dom.rulesTooltip.hidden = true;
+    return;
+  }
+
+  rulesTooltipHiddenTimer = window.setTimeout(() => {
+    dom.rulesTooltip.hidden = true;
+    rulesTooltipHiddenTimer = null;
+  }, 260);
 }
 
 /**
@@ -453,6 +508,7 @@ async function toggleFullscreen() {
 function openSettingsModal() {
   audioEngine.unlock();
   audioEngine.playUiClick();
+  hideRulesTooltip(true);
   dom.settingsHighScore.textContent = String(highScore);
   // Em partidas online em tempo real, o reinício individual pelo menu fica desabilitado
   const isOnline = gameMode === 'online';
@@ -474,14 +530,11 @@ function closeSettingsModal() {
 }
 
 /**
- * Abre o modal de "Como Jogar e Regras".
- *
- * @param {'start'|'review'} [mode='start'] - 'start' inicia a partida ao confirmar;
- *   'review' apenas fecha o modal mantendo a partida atual.
+ * Abre o modal de "Como Jogar e Regras" mantendo a partida em andamento preservada.
  */
-function openRulesModal(mode = 'start') {
-  rulesModalMode = mode;
-  dom.btnRulesConfirm.textContent = mode === 'start' ? 'Entendi, Começar!' : 'Voltar ao Jogo';
+function openRulesModal() {
+  hideRulesTooltip(true);
+  dom.btnRulesConfirm.textContent = 'Voltar ao Jogo';
   dom.modalRules.hidden = false;
 
   const rulesDialog = dom.modalRules.querySelector('.neon-modal--rules');
@@ -502,17 +555,12 @@ function openRulesModal(mode = 'start') {
 }
 
 /**
- * Confirma o pop-up de regras, desbloqueia a Web Audio API e inicia a
- * primeira rodada caso o modal tenha sido aberto na entrada do jogo.
+ * Fecha o modal de regras e desbloqueia a Web Audio API sem reiniciar a partida.
  */
-function confirmRulesModal() {
+function closeRulesModal() {
   audioEngine.unlock();
   audioEngine.playUiClick();
   dom.modalRules.hidden = true;
-
-  if (rulesModalMode === 'start') {
-    startNewGame();
-  }
 }
 
 /**
@@ -548,8 +596,11 @@ function openEndgameModal() {
  * @param {'start'|'mode'|'local-config'|'online-config'|'game'} screenName - Tela destino.
  */
 function showScreen(screenName) {
+  const isEnteringGame = currentScreen !== 'game' && screenName === 'game';
+
   if (currentScreen === 'game' && screenName !== 'game') {
     cancelActivePlayback();
+    hideRulesTooltip(true);
     dom.modalSettings.hidden = true;
     dom.modalEndgame.hidden = true;
     dom.modalRules.hidden = true;
@@ -569,6 +620,10 @@ function showScreen(screenName) {
   const usesBlurredMenuBg =
     screenName === 'mode' || screenName === 'local-config' || screenName === 'online-config';
   dom.menuBgBoard.hidden = !usesBlurredMenuBg;
+
+  if (isEnteringGame) {
+    showRulesTooltip(3000);
+  }
 }
 
 /**
@@ -581,6 +636,7 @@ function returnToStartScreen() {
   }
 
   cancelActivePlayback();
+  hideRulesTooltip(true);
   audioEngine.stopAll();
   dom.modalSettings.hidden = true;
   dom.modalEndgame.hidden = true;
@@ -779,32 +835,13 @@ function runSequencePlayback() {
 }
 
 /**
- * Prepara a tela de jogo com os cards configurados sem iniciar a sequência,
- * exibindo primeiro o modal de "Como Jogar e Regras" para confirmação.
- */
-function enterGameWithRules() {
-  if (onlineSession.code) {
-    cleanupOnlineSession({ notifyServer: true });
-  }
-  gameMode = 'local';
-  cancelActivePlayback();
-  dom.modalSettings.hidden = true;
-  dom.modalEndgame.hidden = true;
-  dom.modalRules.hidden = true;
-  dom.modalLobby.hidden = true;
-
-  isNewRecordInMatch = false;
-  gameState = createGameState(localConfig);
-
-  showScreen('game');
-  renderGameUI();
-  openRulesModal('start');
-}
-
-/**
  * Inicializa uma nova partida local usando as configurações escolhidas pelo usuário.
  */
 function startNewGame() {
+  if (onlineSession.code) {
+    cleanupOnlineSession({ notifyServer: true });
+  }
+
   gameMode = 'local';
   cancelActivePlayback();
   dom.modalSettings.hidden = true;
@@ -1886,7 +1923,7 @@ function bindEvents() {
   dom.btnLocalStart.addEventListener('click', () => {
     audioEngine.unlock();
     audioEngine.playUiClick();
-    enterGameWithRules();
+    startNewGame();
   });
 
   // --- Tela 4: Configuração Online (interface interativa sem backend) ---
@@ -1969,10 +2006,18 @@ function bindEvents() {
   dom.btnGameRules.addEventListener('click', () => {
     audioEngine.unlock();
     audioEngine.playUiClick();
-    // No modo online ou quando a partida local já iniciou, exibe "Voltar ao Jogo"
-    const mode = gameMode === 'local' && gameState.phase === GAME_PHASES.IDLE ? 'start' : 'review';
-    openRulesModal(mode);
+    hideRulesTooltip(true);
+    openRulesModal();
   });
+
+  if (dom.rulesTooltip) {
+    dom.rulesTooltip.addEventListener('click', () => {
+      audioEngine.unlock();
+      audioEngine.playUiClick();
+      hideRulesTooltip(true);
+      openRulesModal();
+    });
+  }
 
   dom.btnGameFullscreen.addEventListener('click', toggleFullscreen);
   dom.btnGameSettings.addEventListener('click', openSettingsModal);
@@ -1992,7 +2037,7 @@ function bindEvents() {
   dom.btnSettingsRules.addEventListener('click', () => {
     audioEngine.playUiClick();
     closeSettingsModal();
-    openRulesModal('review');
+    openRulesModal();
   });
 
   dom.btnRestartMatch.addEventListener('click', () => {
@@ -2044,12 +2089,12 @@ function bindEvents() {
   });
 
   // --- Modal de Regras ---
-  dom.btnRulesConfirm.addEventListener('click', confirmRulesModal);
+  dom.btnRulesConfirm.addEventListener('click', closeRulesModal);
 
-  // Clicar fora da caixa do modal fecha o pop-up (inicia se for a 1ª abertura; retoma se já em jogo)
+  // Clicar fora da caixa do modal fecha o pop-up preservando a partida em andamento
   dom.modalRules.addEventListener('click', (event) => {
     if (event.target === dom.modalRules) {
-      confirmRulesModal();
+      closeRulesModal();
     }
   });
 
@@ -2078,7 +2123,7 @@ function bindEvents() {
       }
       if (!dom.modalRules.hidden) {
         event.preventDefault();
-        confirmRulesModal();
+        closeRulesModal();
         return;
       }
     }

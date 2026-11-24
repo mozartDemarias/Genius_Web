@@ -260,17 +260,18 @@ body {
   justify-content: center;
 }
 
-/* Tela Principal: ~75% a 82% da largura e ~75% da altura da tela */
+/* Tela Principal: ~75% a 82% da largura e ~74% da altura da tela (espaço confortável para o aviso) */
 .genius-board--showcase {
   width: min(80vw, 138dvh);
-  height: 76dvh;
+  height: 74dvh;
 }
 
 /* Tela de Jogo: dimensionada dentro da célula central sem invadir barra superior nem cards */
 .genius-board--playable {
-  width: min(100%, 58vw, 102dvh);
-  height: min(92%, 72dvh, 70vw);
-  max-height: 100%;
+  width: min(84%, 640px, 90dvh);
+  height: auto;
+  aspect-ratio: 4 / 3;
+  max-height: min(88%, 68dvh);
 }
 
 /* Anel externo gigante por trás do tabuleiro: abraça as laterais e vaza no topo/base */
@@ -296,6 +297,13 @@ body {
 /* Na Tela Principal o tabuleiro é mais largo (~80vw), então o círculo acompanha essa largura */
 .genius-board--showcase .board-outer-ring {
   height: clamp(125dvh, 92vw, 165dvh);
+}
+
+/* Na Tela de Jogo desktop, o anel envolve os 4 cantos sem invadir os cards laterais */
+.genius-board--playable .board-outer-ring {
+  width: 120%;
+  height: auto;
+  aspect-ratio: 1 / 1;
 }
 
 /* Borda fina nítida em conic-gradient no anel externo gigante */
@@ -612,10 +620,12 @@ body {
   border-radius: 999px;
   color: #ffffff;
   font-family: inherit;
-  font-size: clamp(1rem, 2.5vmin, 1.45rem);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  text-shadow: 0 0 14px rgba(255, 255, 255, 0.55);
+  font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.62);
   cursor: pointer;
   animation: pulse-prompt 2.4s ease-in-out infinite;
 }
@@ -941,9 +951,10 @@ body {
   box-shadow: 0 0 12px rgba(255, 230, 0, 0.25);
 }
 .pill-btn--yellow.is-selected {
-  background: linear-gradient(180deg, rgba(255, 230, 0, 0.55), rgba(179, 134, 0, 0.85));
+  background: linear-gradient(180deg, rgba(234, 179, 8, 0.8), rgba(161, 98, 7, 0.94));
   border-color: var(--neon-yellow-bright);
   box-shadow: 0 0 22px var(--neon-yellow-glow);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
 }
 
 .pill-btn--green {
@@ -985,6 +996,37 @@ body {
   transform: translateY(-2px);
   filter: brightness(1.12);
   box-shadow: 0 0 34px rgba(133, 255, 133, 0.85);
+}
+
+/* Botão CTA principal sóbrio de alto contraste ("Continuar" e "Criar nova sala") */
+.cta-primary-btn {
+  min-width: min(100%, 290px);
+  min-height: 58px;
+  padding: 14px 36px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.92);
+  background: #f8fafc;
+  color: #090b10;
+  font-family: inherit;
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  transition: transform 0.14s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.cta-primary-btn:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.58);
+}
+
+.cta-primary-btn:active {
+  background: #e2e8f0;
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Controles específicos da tela Online */
@@ -1047,26 +1089,12 @@ body {
   justify-content: center;
 }
 
+/* Mantém a largura e o alinhamento originais do botão no modal online, herdando o visual de .cta-primary-btn */
 .online-create-btn {
   width: min(100%, 380px);
-  min-height: 48px;
-  padding: 10px 28px;
-  border-radius: 999px;
-  border: 2px solid var(--neon-green);
-  background: linear-gradient(180deg, rgba(34, 255, 34, 0.44), rgba(0, 110, 0, 0.85));
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 1.08rem;
-  font-weight: 700;
-  cursor: pointer;
-  touch-action: manipulation;
-  box-shadow: 0 0 18px rgba(34, 255, 34, 0.3);
-  transition: transform 0.14s ease, filter 0.16s ease;
-}
-
-.online-create-btn:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.14);
+  min-height: 50px;
+  padding: 11px 28px;
+  font-size: clamp(1.05rem, 2.5vw, 1.2rem);
 }
 
 /* ==========================================================================
@@ -1087,14 +1115,16 @@ body {
   gap: clamp(6px, 1.2dvh, 14px);
 }
 
-/* Barra superior dedicada no fluxo normal (sem position fixed/absolute) */
+/* Barra superior dedicada no fluxo normal (sem position fixed/absolute), alinhada nas extremidades */
 .game-topbar {
   position: static;
   flex-shrink: 0;
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  max-width: 1200px;
+  margin-inline: auto;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   z-index: 20;
 }
@@ -1105,46 +1135,83 @@ body {
   gap: 8px;
 }
 
-.topbar-group--left {
-  justify-self: start;
-}
-
-.topbar-group--right {
-  justify-self: end;
-}
-
-.round-pill {
-  justify-self: center;
-  min-height: 42px;
-  padding: 6px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(12, 16, 26, 0.82);
-  backdrop-filter: blur(10px);
+/* Âncora relativa do botão "?" para posicionar a notificação sem deslocar a barra superior */
+.rules-anchor {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  white-space: nowrap;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.round-pill strong {
+/* Notificação/tooltip descendo suavemente abaixo do ícone "?" ao entrar na partida */
+.rules-tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -16px;
+  z-index: 25;
+  padding: 9px 14px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(20, 184, 255, 0.72);
+  background: rgba(12, 18, 30, 0.94);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.72), 0 0 18px rgba(20, 184, 255, 0.28);
   color: var(--text-primary);
-  font-size: 1.05rem;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-/* Palco central: ocupa o restante da altura disponível sem invadir o header */
+/* Seta apontando para cima exatamente para o centro do botão "?" (48px -> centro em 24px + 16px - 5px = 35px) */
+.rules-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 35px;
+  width: 10px;
+  height: 10px;
+  background: rgba(12, 18, 30, 0.96);
+  border-top: 1.5px solid rgba(20, 184, 255, 0.72);
+  border-left: 1.5px solid rgba(20, 184, 255, 0.72);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.rules-tooltip.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.rules-tooltip.is-visible:hover,
+.rules-tooltip.is-visible:focus-visible {
+  border-color: var(--neon-blue-bright);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8), 0 0 22px rgba(20, 184, 255, 0.45);
+}
+
+/* Palco central: limita largura no desktop para aproximar os cards da visão central */
 .game-stage {
   width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
   flex: 1;
   min-height: 0;
   padding: clamp(6px, 1.2dvh, 16px) clamp(4px, 1vw, 18px);
   display: grid;
   align-items: center;
   justify-items: center;
-  gap: clamp(12px, 2vw, 26px);
-  grid-template-columns: minmax(150px, 16vw) minmax(0, 1fr) minmax(150px, 16vw);
+  gap: clamp(14px, 2vw, 28px);
+  grid-template-columns: clamp(148px, 16vw, 192px) minmax(0, 1fr) clamp(148px, 16vw, 192px);
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
     'p1 board p2'
@@ -1174,13 +1241,21 @@ body {
   align-self: center;
 }
 
-/* Centro do tabuleiro durante o jogo */
+/* Centro do tabuleiro durante o jogo: hierarquia equilibrada (logo -> rodada -> status) */
 .board-center-content--game {
-  gap: clamp(4px, 1vmin, 9px);
+  padding: 10% 11%;
+  gap: clamp(3px, 0.85vmin, 7px);
+}
+
+.hub-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(3px, 0.6vmin, 6px);
 }
 
 .hub-logo {
-  font-size: clamp(1.05rem, 3.6vmin, 1.85rem);
+  font-size: clamp(0.95rem, 3vmin, 1.55rem);
   font-weight: 900;
   letter-spacing: 0.05em;
   line-height: 1;
@@ -1190,12 +1265,12 @@ body {
 .hub-mini-colors {
   display: flex;
   align-items: center;
-  gap: clamp(5px, 1vmin, 9px);
+  gap: clamp(4px, 0.85vmin, 8px);
 }
 
 .mini-sq {
-  width: clamp(9px, 1.7vmin, 15px);
-  height: clamp(9px, 1.7vmin, 15px);
+  width: clamp(7px, 1.4vmin, 12px);
+  height: clamp(7px, 1.4vmin, 12px);
   border-radius: 3px;
 }
 
@@ -1204,31 +1279,57 @@ body {
 .mini-sq--green { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
 .mini-sq--yellow { background: var(--neon-yellow); box-shadow: 0 0 8px var(--neon-yellow); }
 
+/* Badge discreto de Rodada dentro do círculo central */
+.hub-round {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: clamp(2px, 0.45vmin, 4px) clamp(8px, 1.5vmin, 13px);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: clamp(0.64rem, 1.5vmin, 0.84rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.hub-round__value {
+  font-weight: 800;
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+}
+
 .hub-divider {
-  width: 78%;
+  width: 68%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
-  margin: clamp(2px, 0.5vmin, 5px) 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  margin: clamp(1px, 0.35vmin, 3px) 0;
 }
 
 .hub-status {
   display: flex;
   flex-direction: column;
   align-items: center;
-  line-height: 1.15;
+  max-width: 100%;
+  line-height: 1.12;
 }
 
 .hub-status__prefix {
-  font-size: clamp(0.75rem, 2.1vmin, 1.12rem);
+  font-size: clamp(0.68rem, 1.75vmin, 0.96rem);
   font-weight: 500;
   color: var(--text-secondary);
 }
 
 .hub-status__main {
-  font-size: clamp(1rem, 3.2vmin, 1.7rem);
+  max-width: 100%;
+  font-size: clamp(0.88rem, 2.35vmin, 1.35rem);
   font-weight: 800;
   color: var(--text-primary);
   text-shadow: 0 0 14px rgba(255, 255, 255, 0.38);
+  overflow-wrap: break-word;
 }
 
 /* ==========================================================================
@@ -1258,10 +1359,40 @@ body {
 }
 
 .player-card__score {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
   margin: 0;
   line-height: 1;
-  font-size: clamp(1rem, 2.2vmin, 1.25rem);
+  font-size: clamp(0.98rem, 2vmin, 1.2rem);
   color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Rótulo explícito de vidas com ícone discreto de coração */
+.player-card__lives-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: clamp(0.72rem, 1.35vmin, 0.86rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.lives-heart-icon {
+  width: 13px;
+  height: 13px;
+  color: #ff5c72;
+  flex-shrink: 0;
+  transform: translateY(1px);
+}
+
+.player-card__lives-value {
+  display: inline-flex;
+  align-items: baseline;
 }
 
 .lives-current {
@@ -1523,10 +1654,15 @@ body {
    MODAL DE COMO JOGAR E REGRAS
    ========================================================================== */
 .neon-modal--rules {
-  width: min(100%, 560px);
+  width: min(94vw, 820px);
   max-height: 85dvh;
   overflow: visible;
-  gap: 14px;
+  gap: 16px;
+  padding: clamp(22px, 3vh, 32px) clamp(20px, 3vw, 36px);
+}
+
+.neon-modal--rules .modal-heading {
+  font-size: clamp(1.55rem, 2.8vw, 2.25rem);
 }
 
 .rules-content {
@@ -1537,8 +1673,8 @@ body {
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 6px 4px 6px 0;
+  gap: 14px;
+  padding: 6px 6px 6px 0;
 }
 
 .rules-content::-webkit-scrollbar {
@@ -1552,14 +1688,14 @@ body {
 
 .rule-section {
   width: 100%;
-  padding: 12px 14px;
+  padding: 16px 20px;
   border-radius: 16px;
   background: rgba(16, 21, 34, 0.82);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-left-width: 4px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .rule-section--blue {
@@ -1577,12 +1713,12 @@ body {
 .rule-section__header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .rule-section__icon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -1608,19 +1744,19 @@ body {
 
 .rule-section__title {
   margin: 0;
-  font-size: 1rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
   font-weight: 800;
   color: var(--text-primary);
 }
 
 .rule-section__list {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 22px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  font-size: 0.9rem;
-  line-height: 1.42;
+  gap: 7px;
+  font-size: clamp(0.95rem, 1.25vw, 1.1rem);
+  line-height: 1.55;
   color: var(--text-secondary);
 }
 
@@ -1629,10 +1765,10 @@ body {
 }
 
 .rule-section__list .kbd {
-  min-width: 24px;
-  height: 22px;
-  padding: 0 5px;
-  font-size: 0.75rem;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 7px;
+  font-size: 0.85rem;
   vertical-align: middle;
 }
 
@@ -1645,14 +1781,14 @@ body {
 /* Botão sólido e limpo de confirmação das regras (sem brilho neon excessivo) */
 .rules-confirm-btn {
   min-width: 48px;
-  min-height: 50px;
+  min-height: 54px;
   padding: 12px 24px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: #16a34a;
   color: #ffffff;
   font-family: inherit;
-  font-size: 1.05rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
   font-weight: 800;
   cursor: pointer;
   touch-action: manipulation;
@@ -1974,6 +2110,7 @@ body {
   }
 
   .neon-modal--rules {
+    width: min(94vw, 820px);
     max-height: 85dvh;
     overflow: visible;
   }
@@ -2052,6 +2189,11 @@ body {
     font-size: clamp(0.5rem, 2.2vw, 0.72rem);
   }
 
+  .start-prompt-btn {
+    font-size: clamp(1rem, 4.2vw, 1.35rem);
+    letter-spacing: 0.04em;
+  }
+
   /* Tela de jogo ocupando 100dvh exatos sem scroll e sem invasão entre áreas */
   .screen--game {
     height: 100dvh;
@@ -2062,7 +2204,7 @@ body {
   }
 
   .game-topbar {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    max-width: none;
     gap: 4px;
   }
 
@@ -2078,21 +2220,23 @@ body {
     border-radius: 12px;
   }
 
-  .round-pill {
-    min-height: 36px;
-    padding: 4px 10px;
-    font-size: 0.78rem;
-    gap: 4px;
+  .rules-tooltip {
+    top: calc(100% + 8px);
+    right: -12px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    max-width: calc(100vw - 24px);
   }
 
-  .round-pill strong {
-    font-size: 0.88rem;
+  .rules-tooltip::before {
+    right: 31px;
   }
 
   .game-stage {
     flex: 1;
     min-height: 0;
     width: 100%;
+    max-width: none;
     padding: 0;
     gap: 8px;
     grid-template-columns: 1fr 1fr;
@@ -2142,7 +2286,18 @@ body {
   }
 
   .player-card__score {
-    font-size: 0.88rem;
+    gap: 4px;
+    font-size: 0.85rem;
+  }
+
+  .player-card__lives-label {
+    font-size: 0.68rem;
+    gap: 3px;
+  }
+
+  .lives-heart-icon {
+    width: 11px;
+    height: 11px;
   }
 
   .lives-current {
@@ -2175,21 +2330,41 @@ body {
   }
 
   .genius-board--playable .board-center {
-    height: 54%;
+    height: 58%;
     width: auto;
     aspect-ratio: 1 / 1;
   }
 
+  .board-center-content--game {
+    padding: 9% 10%;
+    gap: clamp(2px, 0.9vw, 5px);
+  }
+
+  .hub-brand {
+    gap: clamp(2px, 0.7vw, 4px);
+  }
+
   .hub-logo {
-    font-size: clamp(0.85rem, 4.2vw, 1.35rem);
+    font-size: clamp(0.72rem, 3.4vw, 1.15rem);
+  }
+
+  .mini-sq {
+    width: clamp(6px, 1.7vw, 10px);
+    height: clamp(6px, 1.7vw, 10px);
+  }
+
+  .hub-round {
+    gap: 4px;
+    padding: 1px 8px;
+    font-size: clamp(0.56rem, 2.2vw, 0.74rem);
   }
 
   .hub-status__prefix {
-    font-size: clamp(0.6rem, 2.6vw, 0.85rem);
+    font-size: clamp(0.54rem, 2.2vw, 0.76rem);
   }
 
   .hub-status__main {
-    font-size: clamp(0.78rem, 3.8vw, 1.2rem);
+    font-size: clamp(0.68rem, 3.1vw, 1.05rem);
   }
 }
 
@@ -2224,7 +2399,8 @@ body {
   .start-prompt-btn {
     min-height: 36px;
     padding: 4px 16px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
   }
 
   /* Tela de jogo em paisagem mobile: 2 linhas (header 40px + palco flex: 1) */
@@ -2237,6 +2413,7 @@ body {
   }
 
   .game-topbar {
+    max-width: none;
     min-height: 40px;
     height: 40px;
     flex-shrink: 0;
@@ -2255,19 +2432,21 @@ body {
     height: 18px;
   }
 
-  .round-pill {
-    min-height: 32px;
-    padding: 3px 12px;
-    font-size: 0.8rem;
+  .rules-tooltip {
+    top: calc(100% + 7px);
+    right: -12px;
+    padding: 7px 11px;
+    font-size: 0.76rem;
   }
 
-  .round-pill strong {
-    font-size: 0.9rem;
+  .rules-tooltip::before {
+    right: 26px;
   }
 
   .game-stage {
     flex: 1;
     min-height: 0;
+    max-width: none;
     overflow: hidden;
     padding: 0;
     gap: 10px;
@@ -2304,26 +2483,41 @@ body {
   }
 
   .genius-board--playable .board-center {
-    height: 56%;
+    height: 60%;
     width: auto;
     aspect-ratio: 1 / 1;
   }
 
+  .board-center-content--game {
+    padding: 8% 10%;
+    gap: clamp(2px, 0.7dvh, 4px);
+  }
+
+  .hub-brand {
+    gap: clamp(2px, 0.55dvh, 4px);
+  }
+
   .hub-logo {
-    font-size: clamp(0.72rem, 3.6dvh, 1.1rem);
+    font-size: clamp(0.66rem, 3.1dvh, 1rem);
   }
 
   .mini-sq {
-    width: clamp(6px, 1.6dvh, 10px);
-    height: clamp(6px, 1.6dvh, 10px);
+    width: clamp(5px, 1.3dvh, 8px);
+    height: clamp(5px, 1.3dvh, 8px);
+  }
+
+  .hub-round {
+    gap: 3px;
+    padding: 1px 7px;
+    font-size: clamp(0.52rem, 2.1dvh, 0.7rem);
   }
 
   .hub-status__prefix {
-    font-size: clamp(0.55rem, 2.3dvh, 0.8rem);
+    font-size: clamp(0.5rem, 2dvh, 0.72rem);
   }
 
   .hub-status__main {
-    font-size: clamp(0.7rem, 3.4dvh, 1.05rem);
+    font-size: clamp(0.64rem, 2.9dvh, 0.96rem);
   }
 
   .player-card {
@@ -2342,7 +2536,18 @@ body {
   }
 
   .player-card__score {
-    font-size: 0.8rem;
+    gap: 4px;
+    font-size: 0.78rem;
+  }
+
+  .player-card__lives-label {
+    font-size: 0.62rem;
+    gap: 3px;
+  }
+
+  .lives-heart-icon {
+    width: 10px;
+    height: 10px;
   }
 
   .lives-current {
@@ -2361,8 +2566,9 @@ body {
   }
 
   .neon-modal--rules {
+    width: min(94vw, 820px);
     max-height: 85dvh;
-    padding: 14px 16px;
+    padding: 14px 18px;
     gap: 10px;
   }
 
@@ -2371,8 +2577,13 @@ body {
     gap: 6px;
   }
 
+  .rule-section__title {
+    font-size: 0.96rem;
+  }
+
   .rule-section__list {
-    font-size: 0.84rem;
+    font-size: 0.86rem;
+    line-height: 1.42;
   }
 }
 
@@ -2474,6 +2685,11 @@ body {
   .idle-animation .bg-quad,
   .start-prompt-btn {
     animation: none;
+  }
+
+  .rules-tooltip {
+    transition: none;
+    transform: none;
   }
 
   .idle-animation .pad,
