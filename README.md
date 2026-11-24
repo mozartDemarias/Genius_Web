@@ -21,7 +21,10 @@
     <img src="https://img.shields.io/badge/JOGAR_ONLINE-VERCEL-00C853?style=for-the-badge&logo=vercel&logoColor=white" alt="Acessar Genius Web na Vercel"/>
   </a>
 </p>
+
+
 ---
+
 
 ## Contexto
 
