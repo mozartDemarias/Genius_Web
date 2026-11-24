@@ -4,24 +4,23 @@
 </h1>
 
 <p align="center">
-  <img src="[https://img.shields.io/static/v1?label=HTML&message=5&color=E34F26&style=for-the-badge&logo=html5&logoColor=white](https://img.shields.io/static/v1?label=HTML&message=5&color=E34F26&style=for-the-badge&logo=html5&logoColor=white)"/>
-  <img src="[https://img.shields.io/static/v1?label=CSS&message=3&color=1572B6&style=for-the-badge&logo=css3&logoColor=white](https://img.shields.io/static/v1?label=CSS&message=3&color=1572B6&style=for-the-badge&logo=css3&logoColor=white)"/>
-  <img src="[https://img.shields.io/static/v1?label=JavaScript&message=ES6%2B&color=F7DF1E&style=for-the-badge&logo=javascript&logoColor=black](https://img.shields.io/static/v1?label=JavaScript&message=ES6%2B&color=F7DF1E&style=for-the-badge&logo=javascript&logoColor=black)"/>
-  <img src="[https://img.shields.io/static/v1?label=Web%20Audio&message=API&color=8A2BE2&style=for-the-badge](https://img.shields.io/static/v1?label=Web%20Audio&message=API&color=8A2BE2&style=for-the-badge)"/>
-  <img src="[https://img.shields.io/static/v1?label=Firebase&message=Realtime%20Database&color=FFCA28&style=for-the-badge&logo=firebase&logoColor=black](https://img.shields.io/static/v1?label=Firebase&message=Realtime%20Database&color=FFCA28&style=for-the-badge&logo=firebase&logoColor=black)"/>
-  <img src="[https://img.shields.io/static/v1?label=Deploy&message=Vercel&color=000000&style=for-the-badge&logo=vercel&logoColor=white](https://img.shields.io/static/v1?label=Deploy&message=Vercel&color=000000&style=for-the-badge&logo=vercel&logoColor=white)"/>
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5"/>
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css&logoColor=white" alt="CSS3"/>
+  <img src="https://img.shields.io/badge/JavaScript-ES6%2B-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript ES6+"/>
+  <img src="https://img.shields.io/badge/Web_Audio-API-8A2BE2?style=for-the-badge" alt="Web Audio API"/>
+  <img src="https://img.shields.io/badge/Firebase-Realtime_Database-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase Realtime Database"/>
+  <img src="https://img.shields.io/badge/Deploy-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel"/>
   <a href="LICENSE">
-    <img src="[https://img.shields.io/static/v1?label=License&message=GPL-3.0&color=blue&style=for-the-badge&logo=gnu&logoColor=white](https://img.shields.io/static/v1?label=License&message=GPL-3.0&color=blue&style=for-the-badge&logo=gnu&logoColor=white)"/>
+    <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=gnu&logoColor=white" alt="GPL-3.0 License"/>
   </a>
 </p>
 
 <p align="center">
   <strong>Status do Projeto:</strong> :heavy_check_mark: Concluído<br><br>
-  <a href="[https://SEU-LINK-AQUI.vercel.app](https://SEU-LINK-AQUI.vercel.app)" target="_blank">
-    <img src="[https://img.shields.io/static/v1?label=JOGAR%20ONLINE&message=VERCEL&color=00C853&style=for-the-badge&logo=vercel&logoColor=white](https://img.shields.io/static/v1?label=JOGAR%20ONLINE&message=VERCEL&color=00C853&style=for-the-badge&logo=vercel&logoColor=white)" alt="Acessar Genius Web na Vercel"/>
+  <a href="https://geniusweb.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/JOGAR_ONLINE-VERCEL-00C853?style=for-the-badge&logo=vercel&logoColor=white" alt="Acessar Genius Web na Vercel"/>
   </a>
 </p>
-
 ---
 
 ## Contexto
